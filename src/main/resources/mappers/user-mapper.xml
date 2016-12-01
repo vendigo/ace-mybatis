@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.vendigo.acemybatis.UserMapper">
+    <select id="selectUsers" resultType="com.github.vendigo.acemybatis.User">
+        SELECT
+        FIRST_NAME as firstName,
+        LAST_NAME as lastName,
+        EMAIL as email,
+        PHONE_NUMBER as phoneNumber,
+        CITY as city
+        FROM USER
+    </select>
+
+    <insert id="insertUser" parameterType="com.github.vendigo.acemybatis.User">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY
+        )
+        VALUES (
+        #{firstName},
+        #{lastName},
+        #{email},
+        #{phoneNumber},
+        #{city}
+        )
+    </insert>
+</mapper>
