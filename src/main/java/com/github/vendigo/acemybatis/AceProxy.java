@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis;
 
+import com.github.vendigo.acemybatis.parse.DeclarationParser;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -26,6 +27,7 @@ public class AceProxy<T> implements InvocationHandler {
         }
 
         System.out.println("Called: "+method.getName());
-        return null;
+        AceMethod aceMethod = DeclarationParser.parseMethodDeclaration(method);
+        return aceMethod.execute(sqlSessionFactory, args);
     }
 }
