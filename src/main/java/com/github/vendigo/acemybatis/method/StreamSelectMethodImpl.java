@@ -1,9 +1,8 @@
-package com.github.vendigo.acemybatis.method.select;
+package com.github.vendigo.acemybatis.method;
 
-import com.github.vendigo.acemybatis.method.AceMethod;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-public class StreamMethodImpl implements AceMethod {
+public class StreamSelectMethodImpl implements AceMethod {
     @Override
     public Object execute(SqlSessionFactory sqlSessionFactory, Object[] args) {
         return null;

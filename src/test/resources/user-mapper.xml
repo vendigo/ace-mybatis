@@ -27,7 +27,7 @@
         SELECT count(*) FROM USER
     </select>
 
-    <insert id="insertUser" parameterType="com.github.vendigo.acemybatis.util.User">
+    <insert id="insertOne" parameterType="com.github.vendigo.acemybatis.util.User">
         INSERT INTO USER (
         FIRST_NAME,
         LAST_NAME,
@@ -43,4 +43,12 @@
         #{city}
         )
     </insert>
+
+    <delete id="deleteAll">
+        DELETE FROM USER
+    </delete>
+
+    <delete id="deleteByEmail" parameterType="string">
+        DELETE FROM USER WHERE EMAIL = #{email}
+    </delete>
 </mapper>

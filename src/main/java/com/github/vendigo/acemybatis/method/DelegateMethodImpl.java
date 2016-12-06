@@ -1,4 +1,4 @@
-package com.github.vendigo.acemybatis.method.select;
+package com.github.vendigo.acemybatis.method;
 
 import com.github.vendigo.acemybatis.method.AceMethod;
 import org.apache.ibatis.binding.MapperMethod;

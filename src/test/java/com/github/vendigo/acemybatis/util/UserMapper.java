@@ -10,5 +10,9 @@ public interface UserMapper {
 
     List<Map<String, Object>> selectMap();
 
-    void insertUser(User user);
+    void insertOne(User user);
+
+    int deleteAll();
+
+    int deleteByEmail(String email);
 }

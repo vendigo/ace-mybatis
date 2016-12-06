@@ -4,12 +4,16 @@ import com.github.vendigo.acemybatis.method.AceMethod;
 import org.apache.ibatis.reflection.ExceptionUtil;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class AceProxy<T> implements InvocationHandler {
+public class AceProxy<T> implements InvocationHandler, Serializable {
     private final SqlSessionFactory sqlSessionFactory;
     private final Class<T> mapperInterface;
+    private final Map<Method, AceMethod> cachedMethods = new ConcurrentHashMap<>();
 
     public AceProxy(SqlSessionFactory sqlSessionFactory, Class<T> mapperInterface) {
         this.sqlSessionFactory = sqlSessionFactory;
@@ -26,7 +30,15 @@ public class AceProxy<T> implements InvocationHandler {
             }
         }
 
-        AceMethod aceMethod = DeclarationParser.parseMethodDeclaration(mapperInterface, sqlSessionFactory, method);
-        return aceMethod.execute(sqlSessionFactory, args);
+        return getOrCreate(mapperInterface, sqlSessionFactory, method).execute(sqlSessionFactory, args);
+    }
+
+    private AceMethod getOrCreate(Class<T> mapperInterface, SqlSessionFactory sqlSessionFactory,
+                                  Method method) {
+        if (!cachedMethods.containsKey(method)) {
+            cachedMethods.put(method, DeclarationParser.parseMethodDeclaration(mapperInterface, sqlSessionFactory,
+                    method));
+        }
+        return cachedMethods.get(method);
     }
 }

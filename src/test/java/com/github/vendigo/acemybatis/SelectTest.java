@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,13 +61,8 @@ public class SelectTest {
         userTestDao.insert(eric);
         List<Map<String, Object>> actualResult = userMapper.selectMap();
 
-        List<Map<String, Object>> expectedResult = new ArrayList<>();
-        expectedResult.add(userToMap(petya));
-        expectedResult.add(userToMap(boris));
-        expectedResult.add(userToMap(eric));
-
         assertThat(actualResult, hasSize(3));
-        assertThat(actualResult, containsInAnyOrder(expectedResult.toArray()));
+        assertThat(actualResult, containsInAnyOrder(userToMap(petya), userToMap(boris), userToMap(eric)));
     }
 
     @Test
