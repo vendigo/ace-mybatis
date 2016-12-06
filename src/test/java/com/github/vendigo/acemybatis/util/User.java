@@ -1,4 +1,4 @@
-package com.github.vendigo.acemybatis;
+package com.github.vendigo.acemybatis.util;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

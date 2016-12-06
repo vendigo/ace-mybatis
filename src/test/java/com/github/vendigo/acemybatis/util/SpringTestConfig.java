@@ -1,11 +1,13 @@
-package com.github.vendigo.acemybatis;
+package com.github.vendigo.acemybatis.util;
 
+import com.github.vendigo.acemybatis.AceMapperFactoryBean;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
@@ -36,4 +38,11 @@ public class SpringTestConfig {
     public UserMapper userMapper(SqlSessionFactory sqlSessionFactory) throws Exception {
         return new AceMapperFactoryBean<>(UserMapper.class, sqlSessionFactory).getObject();
     }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+
 }
