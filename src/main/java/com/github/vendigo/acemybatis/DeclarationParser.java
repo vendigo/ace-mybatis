@@ -2,7 +2,7 @@ package com.github.vendigo.acemybatis;
 
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
-import com.github.vendigo.acemybatis.method.StreamSelectMethodImpl;
+import com.github.vendigo.acemybatis.method.select.StreamSelectMethodImpl;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -21,7 +21,7 @@ public class DeclarationParser {
         switch (command.getType()) {
             case SELECT:
                 if (methodSignature.getReturnType().equals(Stream.class)) {
-                    return new StreamSelectMethodImpl();
+                    return new StreamSelectMethodImpl(method, methodSignature);
                 }
                 break;
         }

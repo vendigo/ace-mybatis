@@ -1,6 +1,5 @@
 package com.github.vendigo.acemybatis.method;
 
-import com.github.vendigo.acemybatis.method.AceMethod;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;

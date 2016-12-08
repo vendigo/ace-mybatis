@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -22,6 +23,7 @@ import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.AllOf.allOf;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
+import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringConfig.class, SpringTestConfig.class})
@@ -72,6 +74,21 @@ public class SelectTest {
         userTestDao.insert(new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park"));
         int count = userMapper.selectOne();
         assertThat(count, equalTo(3));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void selectStream() throws Exception {
+        userTestDao.insert(new User("Petya", "Pomagay", "illhelpyou@gmail.com", "25315", "Nizhyn"));
+        userTestDao.insert(new User("Boris", "Britva", "boris50@gmail.com", "344", "London"));
+        userTestDao.insert(new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park"));
+        List<User> users = userMapper.selectStream().collect(Collectors.toList());
+        assertThat(users, hasSize(3));
+        assertThat(users, hasItems(
+                        hasProperty("email", equalTo("illhelpyou@gmail.com")),
+                        hasProperty("email", equalTo("boris50@gmail.com")),
+                        hasProperty("email", equalTo("eric2006@gmail.com"))
+        ));
     }
 
     private Map<String, Object> userToMap(User user) {
