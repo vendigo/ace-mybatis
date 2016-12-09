@@ -23,15 +23,15 @@
         FROM USER
     </select>
 
-    <select id="selectOne" resultType="java.lang.Integer">
+    <select id="count" resultType="int">
         SELECT count(*) FROM USER
     </select>
 
-    <select id="selectStreamCount" resultType="int">
+    <select id="selectReactiveStreamCount" resultType="int">
         SELECT count(*) FROM USER
     </select>
 
-    <select id="selectStream" resultType="com.github.vendigo.acemybatis.util.User">
+    <select id="selectReactiveStream" resultType="com.github.vendigo.acemybatis.util.User">
         SELECT
         FIRST_NAME as firstName,
         LAST_NAME as lastName,
@@ -40,6 +40,27 @@
         CITY as city
         FROM USER
         ORDER BY EMAIL
+    </select>
+
+    <select id="selectSimpleStreamWithParams" resultType="com.github.vendigo.acemybatis.util.User">
+        SELECT
+        FIRST_NAME as firstName,
+        LAST_NAME as lastName,
+        EMAIL as email,
+        PHONE_NUMBER as phoneNumber,
+        CITY as city
+        FROM USER
+        WHERE CITY != #{excludeCity} AND FIRST_NAME != #{excludeName}
+    </select>
+
+    <select id="selectSimpleStream" resultType="com.github.vendigo.acemybatis.util.User">
+        SELECT
+        FIRST_NAME as firstName,
+        LAST_NAME as lastName,
+        EMAIL as email,
+        PHONE_NUMBER as phoneNumber,
+        CITY as city
+        FROM USER
     </select>
 
     <insert id="insertOne" parameterType="com.github.vendigo.acemybatis.util.User">

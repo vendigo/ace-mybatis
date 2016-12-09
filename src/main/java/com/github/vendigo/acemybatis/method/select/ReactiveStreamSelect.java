@@ -17,13 +17,13 @@ import java.util.stream.Stream;
 
 import static com.github.vendigo.acemybatis.method.MethodUtils.getStatementName;
 
-public class StreamSelectMethodImpl implements AceMethod {
+public class ReactiveStreamSelect implements AceMethod {
 
     private final Method method;
     private final MapperMethod.MethodSignature methodSignature;
     private final int chunkSize = 1000;
 
-    public StreamSelectMethodImpl(Method method, MapperMethod.MethodSignature methodSignature) {
+    public ReactiveStreamSelect(Method method, MapperMethod.MethodSignature methodSignature) {
         this.method = method;
         this.methodSignature = methodSignature;
     }
@@ -33,7 +33,6 @@ public class StreamSelectMethodImpl implements AceMethod {
         String statementName = getStatementName(method);
         Object parameter = methodSignature.convertArgsToSqlCommandParam(args);
         int count = getCount(sqlSessionFactory, parameter);
-        System.out.println("Count: "+ count);
 
         Queue<Object> queue = QueueFactories.boundedQueue(count).build();
         int nThreads = computeThreadPullSize(count);
