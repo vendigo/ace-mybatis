@@ -1,15 +1,9 @@
 package com.github.vendigo.acemybatis;
 
-import com.github.vendigo.acemybatis.util.SpringTestConfig;
+import com.github.vendigo.acemybatis.util.AbstractTest;
 import com.github.vendigo.acemybatis.util.User;
-import com.github.vendigo.acemybatis.util.UserMapper;
-import com.github.vendigo.acemybatis.util.UserTestDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -18,13 +12,7 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringConfig.class, SpringTestConfig.class})
-public class DeleteTest {
-    @Autowired
-    UserMapper userMapper;
-    @Autowired
-    UserTestDao userTestDao;
+public class DeleteTest extends AbstractTest {
 
     @Before
     public void setUp() throws Exception {

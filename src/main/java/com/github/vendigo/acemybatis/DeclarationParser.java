@@ -2,7 +2,7 @@ package com.github.vendigo.acemybatis;
 
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
-import com.github.vendigo.acemybatis.method.MethodUtils;
+import com.github.vendigo.acemybatis.method.CommonUtils;
 import com.github.vendigo.acemybatis.method.select.ReactiveStreamSelect;
 import com.github.vendigo.acemybatis.method.select.SimpleStreamSelect;
 import org.apache.ibatis.binding.MapperMethod;
@@ -27,9 +27,9 @@ public class DeclarationParser {
         switch (command.getType()) {
             case SELECT:
                 if (methodSignature.getReturnType().equals(Stream.class)) {
-                    if (config.hasStatement(MethodUtils.getCountStatementName(method))) {
+                    if (config.hasStatement(CommonUtils.getCountStatementName(method))) {
                         log.info("Using reactive stream select for {}", method.getName());
-                        return new ReactiveStreamSelect(method, methodSignature);
+                        return new ReactiveStreamSelect(method, methodSignature, 1000, 0);
                     } else {
                         log.info("Using simple stream select for {}", method.getName());
                         return new SimpleStreamSelect(method, methodSignature);

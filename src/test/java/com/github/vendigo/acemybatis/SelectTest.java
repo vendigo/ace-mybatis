@@ -1,15 +1,9 @@
 package com.github.vendigo.acemybatis;
 
-import com.github.vendigo.acemybatis.util.SpringTestConfig;
+import com.github.vendigo.acemybatis.util.AbstractTest;
 import com.github.vendigo.acemybatis.util.User;
-import com.github.vendigo.acemybatis.util.UserMapper;
-import com.github.vendigo.acemybatis.util.UserTestDao;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,20 +17,13 @@ import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringConfig.class, SpringTestConfig.class})
-public class SelectTest {
+public class SelectTest extends AbstractTest {
 
     private final User petya = new User("Petya", "Pomagay", "illhelpyou@gmail.com", "25315", "Nizhyn");
     private final User boris = new User("Boris", "Britva", "boris50@gmail.com", "344", "London");
     private final User eric = new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park");
     private final User galya = new User("Galya", "Ivanova", "galya_ivanova@gmail.com", "54915", "Konotop");
     private final User ostin = new User("Ostin", "Lyapunov", "ostin_lyapota@in.ua", "54915", "Brovary");
-
-    @Autowired
-    UserMapper userMapper;
-    @Autowired
-    UserTestDao userTestDao;
 
     @Before
     public void setUp() throws Exception {

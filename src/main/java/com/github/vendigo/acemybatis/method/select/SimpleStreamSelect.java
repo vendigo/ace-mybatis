@@ -1,7 +1,7 @@
 package com.github.vendigo.acemybatis.method.select;
 
 import com.github.vendigo.acemybatis.method.AceMethod;
-import com.github.vendigo.acemybatis.method.MethodUtils;
+import com.github.vendigo.acemybatis.method.CommonUtils;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -21,7 +21,7 @@ public class SimpleStreamSelect implements AceMethod {
 
     @Override
     public Stream<Object> execute(SqlSessionFactory sqlSessionFactory, Object[] args) {
-        String statementName = MethodUtils.getStatementName(method);
+        String statementName = CommonUtils.getStatementName(method);
         Object param = methodSignature.convertArgsToSqlCommandParam(args);
         System.out.println("Params: "+param);
 
