@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 public interface UserMapper {
@@ -21,6 +22,12 @@ public interface UserMapper {
     Stream<User> selectSimpleStream();
 
     void insertOne(User user);
+
+    void insertSync(List<User> users);
+
+    CompletableFuture<Integer> insertAsync(List<User> users);
+
+    CompletableFuture<Void> insertAsyncVoid(List<User> users);
 
     int deleteAll();
 

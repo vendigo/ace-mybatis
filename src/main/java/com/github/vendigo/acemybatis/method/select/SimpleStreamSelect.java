@@ -20,10 +20,9 @@ public class SimpleStreamSelect implements AceMethod {
     }
 
     @Override
-    public Stream<Object> execute(SqlSessionFactory sqlSessionFactory, Object[] args) {
+    public Stream<Object> execute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
         String statementName = CommonUtils.getStatementName(method);
         Object param = methodSignature.convertArgsToSqlCommandParam(args);
-        System.out.println("Params: "+param);
 
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             List<Object> list = sqlSession.selectList(statementName, param);

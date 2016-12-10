@@ -12,7 +12,7 @@ public class DelegateMethodImpl implements AceMethod {
     }
 
     @Override
-    public Object execute(SqlSessionFactory sqlSessionFactory, Object[] args) {
+    public Object execute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             return mapperMethod.execute(sqlSession, args);
         }

@@ -32,7 +32,7 @@ public class ReactiveStreamSelect implements AceMethod {
     }
 
     @Override
-    public Stream<Object> execute(SqlSessionFactory sqlSessionFactory, Object[] args) {
+    public Stream<Object> execute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
         String statementName = getStatementName(method);
         Object parameter = methodSignature.convertArgsToSqlCommandParam(args);
         int count = getCount(sqlSessionFactory, parameter);

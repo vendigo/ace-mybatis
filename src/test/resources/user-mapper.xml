@@ -80,6 +80,57 @@
         )
     </insert>
 
+    <insert id="insertSync" parameterType="com.github.vendigo.acemybatis.util.User">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY
+        )
+        VALUES (
+        #{firstName},
+        #{lastName},
+        #{email},
+        #{phoneNumber},
+        #{city}
+        )
+    </insert>
+
+    <insert id="insertAsync" parameterType="com.github.vendigo.acemybatis.util.User">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY
+        )
+        VALUES (
+        #{firstName},
+        #{lastName},
+        #{email},
+        #{phoneNumber},
+        #{city}
+        )
+    </insert>
+
+    <insert id="insertAsyncVoid" parameterType="com.github.vendigo.acemybatis.util.User">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY
+        )
+        VALUES (
+        #{firstName},
+        #{lastName},
+        #{email},
+        #{phoneNumber},
+        #{city}
+        )
+    </insert>
+
     <delete id="deleteAll">
         DELETE FROM USER
     </delete>
