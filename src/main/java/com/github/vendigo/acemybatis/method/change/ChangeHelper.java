@@ -1,8 +1,7 @@
-package com.github.vendigo.acemybatis.method.insert;
+package com.github.vendigo.acemybatis.method.change;
 
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -11,17 +10,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-public class InsertHelper {
-    static CompletableFuture<Integer> insertAsync(SqlSessionFactory sqlSessionFactory, String statementName,
-                                                  List<Object> entities, int chunkSize, int threadCount) {
+public class ChangeHelper {
+    public static CompletableFuture<Integer> applyAsync(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
+                                                 List<Object> entities, int chunkSize, int threadCount) {
         return CompletableFuture.supplyAsync(() -> {
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
             List<List<Object>> parts = divideOnParts(entities, threadCount);
 
             return IntStream.range(0, threadCount)
-                    .mapToObj((n) -> executorService.submit(new InsertTask(sqlSessionFactory, statementName, parts.get(n),
+                    .mapToObj((n) -> executorService.submit(new ChangeTask(changeFunction, sqlSessionFactory, statementName, parts.get(n),
                             chunkSize)))
-                    .map(InsertHelper::getFromFuture)
+                    .map(ChangeHelper::getFromFuture)
                     .mapToInt(Integer::valueOf)
                     .sum();
         });

@@ -8,9 +8,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 public interface UserMapper {
-    List<User> selectList();
-
     Integer count();
+
+    List<User> selectList();
 
     List<Map<String, Object>> selectMap();
 
@@ -28,6 +28,14 @@ public interface UserMapper {
     CompletableFuture<Integer> insertAsync(List<User> users);
 
     CompletableFuture<Void> insertAsyncVoid(List<User> users);
+
+    void updateOne(User user);
+
+    int updateWithParams(@Param("emailLike") String emailLike, @Param("city") String city);
+
+    int updateSync(List<User> users);
+
+    CompletableFuture<Integer> updateAsync(List<User> users);
 
     int deleteAll();
 

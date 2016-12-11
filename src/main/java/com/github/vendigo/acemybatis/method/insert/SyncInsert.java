@@ -1,9 +1,10 @@
 package com.github.vendigo.acemybatis.method.insert;
 
 import com.github.vendigo.acemybatis.method.AceMethod;
+import com.github.vendigo.acemybatis.method.change.ChangeHelper;
 import com.github.vendigo.acemybatis.method.CommonUtils;
 import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.executor.ExecutorException;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Method;
@@ -29,7 +30,7 @@ public class SyncInsert implements AceMethod {
         String statementName = CommonUtils.getStatementName(method);
         List<Object> entities = (List<Object>) methodSignature.convertArgsToSqlCommandParam(args);
         int computedThreadCount = CommonUtils.computeThreadPullSize(threadCount, entities.size(), chunkSize);
-        InsertHelper.insertAsync(sqlSessionFactory, statementName, entities, chunkSize, computedThreadCount).get();
-        return null;
+        return ChangeHelper.applyAsync(SqlSession::insert, sqlSessionFactory, statementName, entities, chunkSize,
+                computedThreadCount).get();
     }
 }

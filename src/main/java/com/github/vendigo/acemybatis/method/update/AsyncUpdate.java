@@ -1,4 +1,4 @@
-package com.github.vendigo.acemybatis.method.insert;
+package com.github.vendigo.acemybatis.method.update;
 
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.change.ChangeHelper;
@@ -10,14 +10,14 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.lang.reflect.Method;
 import java.util.List;
 
-public class AsyncInsert implements AceMethod {
+public class AsyncUpdate implements AceMethod {
 
     private Method method;
     private MapperMethod.MethodSignature methodSignature;
     private int threadCount;
     private int chunkSize;
 
-    public AsyncInsert(Method method, MapperMethod.MethodSignature methodSignature, int chunkSize, int threadCount) {
+    public AsyncUpdate(Method method, MapperMethod.MethodSignature methodSignature, int chunkSize, int threadCount) {
         this.method = method;
         this.methodSignature = methodSignature;
         this.threadCount = threadCount;
@@ -30,7 +30,7 @@ public class AsyncInsert implements AceMethod {
         String statementName = CommonUtils.getStatementName(method);
         List<Object> entities = (List<Object>) methodSignature.convertArgsToSqlCommandParam(args);
         int computedThreadCount = CommonUtils.computeThreadPullSize(threadCount, entities.size(), chunkSize);
-        return ChangeHelper.applyAsync(SqlSession::insert,sqlSessionFactory, statementName, entities, chunkSize,
+        return ChangeHelper.applyAsync(SqlSession::update, sqlSessionFactory, statementName, entities, chunkSize,
                 computedThreadCount);
     }
 }

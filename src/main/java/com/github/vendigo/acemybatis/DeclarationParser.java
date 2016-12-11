@@ -7,6 +7,8 @@ import com.github.vendigo.acemybatis.method.insert.AsyncInsert;
 import com.github.vendigo.acemybatis.method.insert.SyncInsert;
 import com.github.vendigo.acemybatis.method.select.ReactiveStreamSelect;
 import com.github.vendigo.acemybatis.method.select.SimpleStreamSelect;
+import com.github.vendigo.acemybatis.method.update.AsyncUpdate;
+import com.github.vendigo.acemybatis.method.update.SyncUpdate;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -50,6 +52,18 @@ public class DeclarationParser {
                     if (parameterTypes.size() == 1 && parameterTypes.get(0).equals(List.class)) {
                         log.info("Using sync insert for {}", method.getName());
                         return new SyncInsert(method, methodSignature, 1000, 0);
+                    }
+                }
+                break;
+            case UPDATE:
+                if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
+                    log.info("Using async update for {}", method.getName());
+                    return new AsyncUpdate(method, methodSignature, 1000, 0);
+                } else {
+                    List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
+                    if (parameterTypes.size() == 1 && parameterTypes.get(0).equals(List.class)) {
+                        log.info("Using sync update for {}", method.getName());
+                        return new SyncUpdate(method, methodSignature, 1000, 0);
                     }
                 }
                 break;

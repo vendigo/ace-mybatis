@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static com.github.vendigo.acemybatis.util.AssertHelper.assertCollections;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -40,8 +41,7 @@ public class InsertTest extends AbstractTest {
     public void insertSync() throws Exception {
         userMapper.insertSync(users);
         List<User> actualResults = userTestDao.selectAll();
-        assertThat(actualResults, hasSize(5));
-        assertThat(actualResults, containsInAnyOrder(users.toArray()));
+        assertCollections(actualResults, users);
     }
 
     @Test
@@ -50,8 +50,7 @@ public class InsertTest extends AbstractTest {
         Integer inserted = future.get();
         List<User> actualResults = userTestDao.selectAll();
         assertThat(inserted, equalTo(5));
-        assertThat(actualResults, hasSize(5));
-        assertThat(actualResults, containsInAnyOrder(users.toArray()));
+        assertCollections(actualResults, users);
     }
 
     @Test
@@ -59,7 +58,6 @@ public class InsertTest extends AbstractTest {
         CompletableFuture<Void> future = userMapper.insertAsyncVoid(users);
         future.get();
         List<User> actualResults = userTestDao.selectAll();
-        assertThat(actualResults, hasSize(5));
-        assertThat(actualResults, containsInAnyOrder(users.toArray()));
+        assertCollections(actualResults, users);
     }
 }
