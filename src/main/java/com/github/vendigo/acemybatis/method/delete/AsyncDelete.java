@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.method.delete;
 
+import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.method.change.ChangeMethod;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
@@ -10,8 +11,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class AsyncDelete extends ChangeMethod {
 
-    public AsyncDelete(Method method, MapperMethod.MethodSignature methodSignature, int chunkSize, int threadCount) {
-        super(method, methodSignature, chunkSize, threadCount);
+    public AsyncDelete(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config) {
+        super(method, methodSignature, config);
     }
 
     @SuppressWarnings("unchecked")

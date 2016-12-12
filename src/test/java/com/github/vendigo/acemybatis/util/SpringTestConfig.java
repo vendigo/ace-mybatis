@@ -1,6 +1,6 @@
 package com.github.vendigo.acemybatis.util;
 
-import com.github.vendigo.acemybatis.AceMapperFactoryBean;
+import com.github.vendigo.acemybatis.proxy.AceProxyFactory;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class SpringTestConfig {
 
     @Bean
     public UserMapper userMapper(SqlSessionFactory sqlSessionFactory) throws Exception {
-        return new AceMapperFactoryBean<>(UserMapper.class, sqlSessionFactory).getObject();
+        return new AceProxyFactory<>(UserMapper.class, sqlSessionFactory).newInstance();
     }
 
     @Bean

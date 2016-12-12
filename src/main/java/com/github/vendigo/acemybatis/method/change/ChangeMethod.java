@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.method.change;
 
+import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.CommonUtils;
 import org.apache.ibatis.binding.MapperMethod;
@@ -11,22 +12,22 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class ChangeMethod implements AceMethod {
     private MapperMethod.MethodSignature methodSignature;
-    private int threadCount;
-    private int chunkSize;
+    private AceConfig config;
     private String statementName;
 
-    public ChangeMethod(Method method, MapperMethod.MethodSignature methodSignature, int chunkSize, int threadCount) {
+    public ChangeMethod(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config) {
         this.methodSignature = methodSignature;
-        this.threadCount = threadCount;
-        this.chunkSize = chunkSize;
         this.statementName = CommonUtils.getStatementName(method);
+        this.config = config;
     }
 
     @SuppressWarnings("unchecked")
     protected CompletableFuture<Integer> doExecute(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
         List<Object> entities = (List<Object>) methodSignature.convertArgsToSqlCommandParam(args);
-        int threadCount = CommonUtils.computeThreadPullSize(this.threadCount, entities.size(), chunkSize);
-        return ChangeHelper.applyAsync(changeFunction, sqlSessionFactory, statementName, entities, chunkSize,
+        int threadCount = CommonUtils.computeThreadPullSize(config.getThreadCount(), entities.size(),
+                config.getUpdateChunkSize());
+        return ChangeHelper.applyAsync(changeFunction, sqlSessionFactory, statementName, entities,
+                config.getUpdateChunkSize(),
                 threadCount);
     }
 

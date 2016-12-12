@@ -2,6 +2,7 @@ package com.github.vendigo.acemybatis.method.select;
 
 import com.aol.cyclops.data.async.Queue;
 import com.aol.cyclops.data.async.QueueFactories;
+import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.CommonUtils;
 import org.apache.ibatis.binding.MapperMethod;
@@ -21,14 +22,12 @@ public class ReactiveStreamSelect implements AceMethod {
 
     private final Method method;
     private final MapperMethod.MethodSignature methodSignature;
-    private final int chunkSize;
-    private final int threadCount;
+    private final AceConfig config;
 
-    public ReactiveStreamSelect(Method method, MapperMethod.MethodSignature methodSignature, int chunkSize, int threadCount) {
+    public ReactiveStreamSelect(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config) {
         this.method = method;
         this.methodSignature = methodSignature;
-        this.chunkSize = chunkSize;
-        this.threadCount = threadCount;
+        this.config = config;
     }
 
     @Override
@@ -38,12 +37,12 @@ public class ReactiveStreamSelect implements AceMethod {
         int count = getCount(sqlSessionFactory, parameter);
 
         Queue<Object> queue = QueueFactories.boundedQueue(count).build();
-        int nThreads = CommonUtils.computeThreadPullSize(threadCount, count, chunkSize);
+        int nThreads = CommonUtils.computeThreadPullSize(config.getThreadCount(), count, config.getSelectChunkSize());
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
         AtomicInteger offset = new AtomicInteger(0);
         IntStream.range(0, nThreads).forEach((n) -> executorService.execute(new SelectTask(statementName, parameter,
                 sqlSessionFactory, queue, offset, count,
-                chunkSize)));
+                config.getSelectChunkSize())));
         return queue.jdkStream().limit(count);
     }
 
