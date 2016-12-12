@@ -28,7 +28,7 @@ public class AceProxyFactory<T> {
 
     @SuppressWarnings("unchecked")
     public T newInstance() {
-        AceProxy aceProxy = new AceProxy(sqlSessionFactory, mapperInterface, aceConfig);
-        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface}, aceProxy);
+        return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface},
+                new AceProxy(sqlSessionFactory, mapperInterface, aceConfig));
     }
 }

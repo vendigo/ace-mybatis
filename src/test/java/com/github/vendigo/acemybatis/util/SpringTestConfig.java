@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.util;
 
+import com.github.vendigo.acemybatis.config.AceMapperScannerConfigurer;
 import com.github.vendigo.acemybatis.proxy.AceProxyFactory;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
@@ -39,6 +40,11 @@ public class SpringTestConfig {
     @Bean
     public UserMapper userMapper(SqlSessionFactory sqlSessionFactory) throws Exception {
         return new AceProxyFactory<>(UserMapper.class, sqlSessionFactory).newInstance();
+    }
+
+    //@Bean
+    public AceMapperScannerConfigurer mapperScannerConfigurer(SqlSessionFactory sqlSessionFactory) {
+        return new AceMapperScannerConfigurer(sqlSessionFactory, "com.github.vendigo.acemybatis.util");
     }
 
     @Bean

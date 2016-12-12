@@ -16,8 +16,8 @@ public interface UserMapper {
 
     Stream<User> selectReactiveStream();
 
-    Stream<User> selectSimpleStreamWithParams(@Param("excludeCity")String excludeCity,
-                                              @Param("excludeName")String excludeName);
+    Stream<User> selectSimpleStreamWithParams(@Param("excludeCity") String excludeCity,
+                                              @Param("excludeName") String excludeName);
 
     Stream<User> selectSimpleStream();
 
