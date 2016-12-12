@@ -10,77 +10,53 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
 
 public class SelectTest extends AbstractTest {
 
-    private final User petya = new User("Petya", "Pomagay", "illhelpyou@gmail.com", "25315", "Nizhyn");
-    private final User boris = new User("Boris", "Britva", "boris50@gmail.com", "344", "London");
-    private final User eric = new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park");
-    private final User galya = new User("Galya", "Ivanova", "galya_ivanova@gmail.com", "54915", "Konotop");
-    private final User ostin = new User("Ostin", "Lyapunov", "ostin_lyapota@in.ua", "54915", "Brovary");
-
     @Before
     public void setUp() throws Exception {
-        userTestDao.deleteAll();
-        userTestDao.insert(petya);
-        userTestDao.insert(boris);
-        userTestDao.insert(eric);
+        reInsertAllGuys();
     }
 
     @Test
     public void selectList() throws Exception {
-        List<User> users = userMapper.selectList();
-        assertAllGuys(users);
+        List<User> actualUsers = userMapper.selectList();
+        assertCollections(actualUsers, users);
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void selectMap() throws Exception {
         List<Map<String, Object>> actualResult = userMapper.selectMap();
-        assertThat(actualResult, hasSize(3));
-        assertThat(actualResult, containsInAnyOrder(userToMap(petya), userToMap(boris), userToMap(eric)));
+        assertCollections(actualResult, asList(userToMap(petya), userToMap(boris), userToMap(eric),
+                userToMap(galya), userToMap(ostin)));
     }
 
     @Test
     public void selectOne() throws Exception {
         int count = userMapper.count();
-        assertThat(count, equalTo(3));
+        assertThat(count, equalTo(5));
     }
 
     @Test
     public void selectReactiveStream() throws Exception {
-        List<User> users = userMapper.selectReactiveStream().collect(Collectors.toList());
-        assertAllGuys(users);
+        List<User> actualUsers = userMapper.selectReactiveStream().collect(Collectors.toList());
+        assertCollections(actualUsers, users);
     }
 
     @Test
     public void selectSimpleStreamWithParams() throws Exception {
-        userTestDao.insert(galya);
-        userTestDao.insert(ostin);
-        List<User> users = userMapper.selectSimpleStreamWithParams("Konotop", "Ostin").collect(Collectors.toList());
-        assertAllGuys(users);
+        List<User> actualUsers = userMapper.selectSimpleStreamWithParams("Konotop", "Ostin").collect(Collectors.toList());
+        assertCollections(actualUsers, asList(petya, boris, eric));
     }
 
     @Test
     public void selectSimpleStream() throws Exception {
-        List<User> users = userMapper.selectSimpleStream().collect(Collectors.toList());
-        assertAllGuys(users);
-    }
-
-    @SuppressWarnings("unchecked")
-    private void assertAllGuys(List<User> users) {
-        assertThat(users, hasSize(3));
-        assertThat(users, hasItems(
-                hasProperty("email", equalTo("illhelpyou@gmail.com")),
-                hasProperty("email", equalTo("boris50@gmail.com")),
-                hasProperty("email", equalTo("eric2006@gmail.com"))
-        ));
+        List<User> actualUsers = userMapper.selectSimpleStream().collect(Collectors.toList());
+        assertCollections(actualUsers, users);
     }
 
     private Map<String, Object> userToMap(User user) {

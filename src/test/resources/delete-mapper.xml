@@ -11,4 +11,12 @@
     <delete id="deleteByEmail" parameterType="string">
         DELETE FROM USER WHERE EMAIL = #{email}
     </delete>
+
+    <delete id="syncDelete" parameterType="com.github.vendigo.acemybatis.util.User">
+        DELETE FROM USER WHERE EMAIL = #{email}
+    </delete>
+
+    <delete id="asyncDelete" parameterType="com.github.vendigo.acemybatis.util.User">
+        DELETE FROM USER WHERE EMAIL = #{email}
+    </delete>
 </mapper>

@@ -1,6 +1,5 @@
 package com.github.vendigo.acemybatis.method.change;
 
-import com.github.vendigo.acemybatis.method.change.ChangeHelper;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;

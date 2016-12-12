@@ -3,6 +3,8 @@ package com.github.vendigo.acemybatis;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.CommonUtils;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
+import com.github.vendigo.acemybatis.method.delete.AsyncDelete;
+import com.github.vendigo.acemybatis.method.delete.SyncDelete;
 import com.github.vendigo.acemybatis.method.insert.AsyncInsert;
 import com.github.vendigo.acemybatis.method.insert.SyncInsert;
 import com.github.vendigo.acemybatis.method.select.ReactiveStreamSelect;
@@ -64,6 +66,18 @@ public class DeclarationParser {
                     if (parameterTypes.size() == 1 && parameterTypes.get(0).equals(List.class)) {
                         log.info("Using sync update for {}", method.getName());
                         return new SyncUpdate(method, methodSignature, 1000, 0);
+                    }
+                }
+                break;
+            case DELETE:
+                if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
+                    log.info("Using async delete for {}", method.getName());
+                    return new AsyncDelete(method, methodSignature, 1000, 0);
+                } else {
+                    List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
+                    if (parameterTypes.size() == 1 && parameterTypes.get(0).equals(List.class)) {
+                        log.info("Using sync delete for {}", method.getName());
+                        return new SyncDelete(method, methodSignature, 1000, 0);
                     }
                 }
                 break;
