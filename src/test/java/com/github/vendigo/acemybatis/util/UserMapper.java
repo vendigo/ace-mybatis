@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.util;
 
+import com.github.vendigo.acemybatis.config.AceMapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+@AceMapper
 public interface UserMapper {
     Integer count();
 
