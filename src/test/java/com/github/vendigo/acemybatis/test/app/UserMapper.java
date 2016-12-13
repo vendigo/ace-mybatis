@@ -1,4 +1,4 @@
-package com.github.vendigo.acemybatis.util;
+package com.github.vendigo.acemybatis.test.app;
 
 import com.github.vendigo.acemybatis.config.AceMapper;
 import org.apache.ibatis.annotations.Param;

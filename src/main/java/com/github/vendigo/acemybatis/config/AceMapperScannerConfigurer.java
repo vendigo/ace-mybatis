@@ -9,17 +9,21 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.StringUtils;
 
+import static com.github.vendigo.acemybatis.utils.Validator.notNull;
+
 public class AceMapperScannerConfigurer implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
     private final String basePackage;
+    private final AceConfig aceConfig;
     private ApplicationContext applicationContext;
 
-    public AceMapperScannerConfigurer(String basePackage) {
-        this.basePackage = basePackage;
+    public AceMapperScannerConfigurer(String basePackage, AceConfig aceConfig) {
+        this.basePackage = notNull(basePackage);
+        this.aceConfig = notNull(aceConfig);
     }
 
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-        AceClassPathMapperScanner scanner = new AceClassPathMapperScanner(registry);
+        AceClassPathMapperScanner scanner = new AceClassPathMapperScanner(registry, aceConfig);
         scanner.setResourceLoader(applicationContext);
         scanner.registerFilters();
         scanner.scan(StringUtils.tokenizeToStringArray(basePackage,
@@ -34,5 +38,47 @@ public class AceMapperScannerConfigurer implements BeanDefinitionRegistryPostPro
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private String basePackage;
+        private AceConfig config;
+        private int selectChunkSize;
+        private int updateChunkSize;
+        private int threadCount;
+
+        public Builder basePackage(String basePackage) {
+            this.basePackage = basePackage;
+            return this;
+        }
+
+        public Builder config(AceConfig config) {
+            this.config = config;
+            return this;
+        }
+
+        public Builder selectChunkSize(int selectChunkSize) {
+            this.selectChunkSize = selectChunkSize;
+            return this;
+        }
+
+        public Builder updateChunkSize(int updateChunkSize) {
+            this.updateChunkSize = updateChunkSize;
+            return this;
+        }
+
+        public Builder threadCount(int threadCount) {
+            this.threadCount = threadCount;
+            return this;
+        }
+
+        public AceMapperScannerConfigurer build() {
+            return new AceMapperScannerConfigurer(basePackage, AceConfigResolver.resolveConfig(config,
+                    selectChunkSize, updateChunkSize, threadCount));
+        }
     }
 }

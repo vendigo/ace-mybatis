@@ -1,4 +1,4 @@
-package com.github.vendigo.acemybatis.util;
+package com.github.vendigo.acemybatis.test.app;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

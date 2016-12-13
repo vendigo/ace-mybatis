@@ -1,4 +1,4 @@
-package com.github.vendigo.acemybatis.util;
+package com.github.vendigo.acemybatis.test.app;
 
 import com.github.vendigo.acemybatis.config.AceMapperScannerConfigurer;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -14,7 +14,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan(basePackages = "com.github.vendigo.acemybatis")
+@ComponentScan(basePackages = "com.github.vendigo.acemybatis.test.app")
 public class SpringTestConfig {
     @Bean
     public DataSource dataSource() {
@@ -34,7 +34,11 @@ public class SpringTestConfig {
 
     @Bean
     public static AceMapperScannerConfigurer mapperScannerConfigurer() {
-        return new AceMapperScannerConfigurer("com.github.vendigo.acemybatis.util");
+        return AceMapperScannerConfigurer.builder()
+                .basePackage("com.github.vendigo.acemybatis.test.app")
+                .selectChunkSize(2000)
+                .updateChunkSize(1000)
+                .build();
     }
 
     @Bean

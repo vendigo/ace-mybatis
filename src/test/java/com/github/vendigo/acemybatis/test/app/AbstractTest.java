@@ -1,4 +1,4 @@
-package com.github.vendigo.acemybatis.util;
+package com.github.vendigo.acemybatis.test.app;
 
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

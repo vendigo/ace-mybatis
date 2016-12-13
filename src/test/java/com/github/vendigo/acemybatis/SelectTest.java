@@ -1,7 +1,7 @@
 package com.github.vendigo.acemybatis;
 
-import com.github.vendigo.acemybatis.util.AbstractTest;
-import com.github.vendigo.acemybatis.util.User;
+import com.github.vendigo.acemybatis.test.app.AbstractTest;
+import com.github.vendigo.acemybatis.test.app.User;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.vendigo.acemybatis.util.UserMapper">
+<mapper namespace="com.github.vendigo.acemybatis.test.app.UserMapper">
 
-    <update id="updateOne" parameterType="com.github.vendigo.acemybatis.util.User">
+    <update id="updateOne" parameterType="com.github.vendigo.acemybatis.test.app.User">
         UPDATE USER SET
         FIRST_NAME = #{firstName},
         LAST_NAME = #{lastName},
@@ -19,7 +19,7 @@
         WHERE email like #{emailLike}
     </update>
 
-    <update id="updateSync" parameterType="com.github.vendigo.acemybatis.util.User">
+    <update id="updateSync" parameterType="com.github.vendigo.acemybatis.test.app.User">
         UPDATE USER SET
         FIRST_NAME = #{firstName},
         LAST_NAME = #{lastName},
@@ -28,7 +28,7 @@
         WHERE email = #{email}
     </update>
 
-    <update id="updateAsync" parameterType="com.github.vendigo.acemybatis.util.User">
+    <update id="updateAsync" parameterType="com.github.vendigo.acemybatis.test.app.User">
         UPDATE USER SET
         FIRST_NAME = #{firstName},
         LAST_NAME = #{lastName},

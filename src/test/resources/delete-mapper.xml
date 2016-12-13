@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.github.vendigo.acemybatis.util.UserMapper">
+<mapper namespace="com.github.vendigo.acemybatis.test.app.UserMapper">
 
     <delete id="deleteAll">
         DELETE FROM USER
@@ -12,11 +12,11 @@
         DELETE FROM USER WHERE EMAIL = #{email}
     </delete>
 
-    <delete id="syncDelete" parameterType="com.github.vendigo.acemybatis.util.User">
+    <delete id="syncDelete" parameterType="com.github.vendigo.acemybatis.test.app.User">
         DELETE FROM USER WHERE EMAIL = #{email}
     </delete>
 
-    <delete id="asyncDelete" parameterType="com.github.vendigo.acemybatis.util.User">
+    <delete id="asyncDelete" parameterType="com.github.vendigo.acemybatis.test.app.User">
         DELETE FROM USER WHERE EMAIL = #{email}
     </delete>
 </mapper>

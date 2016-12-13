@@ -1,6 +1,6 @@
 package com.github.vendigo.acemybatis;
 
-import com.github.vendigo.acemybatis.util.AbstractTest;
+import com.github.vendigo.acemybatis.test.app.AbstractTest;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
