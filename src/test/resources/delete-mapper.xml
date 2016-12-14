@@ -19,4 +19,8 @@
     <delete id="asyncDelete" parameterType="com.github.vendigo.acemybatis.test.app.User">
         DELETE FROM USER WHERE EMAIL = #{email}
     </delete>
+
+    <delete id="deleteCollector" parameterType="com.github.vendigo.acemybatis.test.app.User">
+        DELETE FROM USER WHERE EMAIL = #{email}
+    </delete>
 </mapper>

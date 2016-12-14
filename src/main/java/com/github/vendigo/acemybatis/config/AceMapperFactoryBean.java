@@ -3,10 +3,10 @@ package com.github.vendigo.acemybatis.config;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.FactoryBean;
 
-public class AceMapperFactoryBean<T> implements FactoryBean<T> {
+class AceMapperFactoryBean<T> implements FactoryBean<T> {
     private final AceMapperFactory<T> proxyFactory;
 
-    public AceMapperFactoryBean(Class<T> mapperInterface, SqlSessionFactory sqlSessionFactory, AceConfig aceConfig) {
+    AceMapperFactoryBean(Class<T> mapperInterface, SqlSessionFactory sqlSessionFactory, AceConfig aceConfig) {
         this.proxyFactory = new AceMapperFactory<>(mapperInterface, sqlSessionFactory, aceConfig);
     }
 

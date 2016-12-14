@@ -1,6 +1,7 @@
 package com.github.vendigo.acemybatis.test.app;
 
 import com.github.vendigo.acemybatis.config.AceMapper;
+import com.github.vendigo.acemybatis.method.change.ChangeCollector;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -31,6 +32,8 @@ public interface UserMapper {
 
     CompletableFuture<Void> insertAsyncVoid(List<User> users);
 
+    ChangeCollector<User> insertCollector();
+
     void updateOne(User user);
 
     int updateWithParams(@Param("emailLike") String emailLike, @Param("city") String city);
@@ -39,6 +42,8 @@ public interface UserMapper {
 
     CompletableFuture<Integer> updateAsync(List<User> users);
 
+    ChangeCollector<User> updateCollector();
+
     int deleteAll();
 
     int deleteByEmail(String email);
@@ -46,4 +51,6 @@ public interface UserMapper {
     int syncDelete(List<User> users);
 
     CompletableFuture<Integer> asyncDelete(List<User> users);
+
+    ChangeCollector<User> deleteCollector();
 }

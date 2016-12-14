@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.method.change;
 
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ import java.util.stream.IntStream;
 
 public class ChangeHelper {
     public static CompletableFuture<Integer> applyAsync(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
-                                                 List<Object> entities, int chunkSize, int threadCount) {
+                                                        List<Object> entities, int chunkSize, int threadCount) {
         return CompletableFuture.supplyAsync(() -> {
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
             List<List<Object>> parts = divideOnParts(entities, threadCount);
@@ -24,6 +25,16 @@ public class ChangeHelper {
                     .mapToInt(Integer::valueOf)
                     .sum();
         });
+    }
+
+    public static void changeChunk(SqlSessionFactory sqlSessionFactory, List<Object> chunk, String statementName,
+                                   ChangeFunction changeFunction) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+            for (Object entity : chunk) {
+                changeFunction.apply(sqlSession, statementName, entity);
+            }
+            sqlSession.commit();
+        }
     }
 
     static List<List<Object>> divideOnParts(List<Object> list, int partsCount) {

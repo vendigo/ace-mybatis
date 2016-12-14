@@ -1,10 +1,11 @@
 package com.github.vendigo.acemybatis.config;
 
-public class AceConfigResolver {
+class AceConfigResolver {
 
-    private AceConfigResolver() {}
+    private AceConfigResolver() {
+    }
 
-    public static AceConfig resolveConfig(AceConfig config, int selectChunkSize, int updateChunkSize, int threadCount) {
+    static AceConfig resolveConfig(AceConfig config, int selectChunkSize, int updateChunkSize, int threadCount) {
         if (config == null) {
             config = new AceConfig();
             if (selectChunkSize > 0) {

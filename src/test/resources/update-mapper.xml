@@ -37,4 +37,13 @@
         WHERE email = #{email}
     </update>
 
+    <update id="updateCollector" parameterType="com.github.vendigo.acemybatis.test.app.User">
+        UPDATE USER SET
+        FIRST_NAME = #{firstName},
+        LAST_NAME = #{lastName},
+        PHONE_NUMBER = #{phoneNumber},
+        CITY = #{city}
+        WHERE email = #{email}
+    </update>
+
 </mapper>

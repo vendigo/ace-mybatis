@@ -14,7 +14,6 @@ public class CollectorContainer {
     private final String statementName;
     private final ChangeFunction changeFunction;
 
-
     public CollectorContainer(AceConfig config, SqlSessionFactory sqlSessionFactory, String statementName,
                               ChangeFunction changeFunction) {
         this.config = config;
@@ -30,21 +29,16 @@ public class CollectorContainer {
         onInsert.add(o);
 
         if (onInsert.size() >= config.getUpdateChunkSize()) {
-            doChange();
+            ChangeHelper.changeChunk(sqlSessionFactory, onInsert, statementName, changeFunction);
             onInsert.clear();
         }
     }
 
-    private void doChange() {
-        try {
-            new ChangeTask(changeFunction, sqlSessionFactory, statementName, onInsert, config.getUpdateChunkSize())
-                    .call();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    public List finish() {
+        if (!onInsert.isEmpty()) {
+            ChangeHelper.changeChunk(sqlSessionFactory, onInsert, statementName, changeFunction);
+            onInsert.clear();
         }
-    }
-
-    public List<Object> getAll() {
         return all;
     }
 

@@ -55,4 +55,14 @@ public class UpdateTest extends AbstractTest {
         assertThat(updated, equalTo(5));
         assertCollections(actualResults, newUsers);
     }
+
+    @Test
+    public void updateCollector() throws Exception {
+        int updated = userMapper.updateAsync(newUsers).get();
+        List<User> collected = newUsers.stream().collect(userMapper.updateCollector());
+        List<User> actualResults = userTestDao.selectAll();
+        assertThat(updated, equalTo(5));
+        assertCollections(actualResults, newUsers);
+        assertCollections(collected, newUsers);
+    }
 }

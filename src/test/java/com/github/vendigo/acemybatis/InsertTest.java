@@ -49,4 +49,12 @@ public class InsertTest extends AbstractTest {
         List<User> actualResults = userTestDao.selectAll();
         assertCollections(actualResults, users);
     }
+
+    @Test
+    public void insertCollector() throws Exception {
+        List<User> collectedUsers = users.stream().collect(userMapper.insertCollector());
+        List<User> actualResults = userTestDao.selectAll();
+        assertCollections(actualResults, users);
+        assertCollections(collectedUsers, users);
+    }
 }

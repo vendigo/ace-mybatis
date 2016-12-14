@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-public class ChangeCollector implements Collector<Object, CollectorContainer, List<Object>> {
+public class ChangeCollector<T> implements Collector<T, CollectorContainer, List<T>> {
 
     private final AceConfig config;
     private final SqlSessionFactory sqlSessionFactory;
@@ -33,7 +33,7 @@ public class ChangeCollector implements Collector<Object, CollectorContainer, Li
     }
 
     @Override
-    public BiConsumer<CollectorContainer, Object> accumulator() {
+    public BiConsumer<CollectorContainer, T> accumulator() {
         return CollectorContainer::accumulate;
     }
 
@@ -43,8 +43,8 @@ public class ChangeCollector implements Collector<Object, CollectorContainer, Li
     }
 
     @Override
-    public Function<CollectorContainer, List<Object>> finisher() {
-        return CollectorContainer::getAll;
+    public Function<CollectorContainer, List<T>> finisher() {
+        return CollectorContainer::finish;
     }
 
     @Override

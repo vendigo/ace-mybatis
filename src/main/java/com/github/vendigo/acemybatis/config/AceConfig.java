@@ -8,7 +8,7 @@ public class AceConfig {
     private int updateChunkSize = 2000;
     private int threadCount = 0;
 
-    public AceConfig() {
+    AceConfig() {
     }
 
     public AceConfig(int selectChunkSize, int updateChunkSize, int threadCount) {

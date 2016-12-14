@@ -11,10 +11,10 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.util.Set;
 
-public class AceClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
+class AceClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     private final AceConfig aceConfig;
 
-    public AceClassPathMapperScanner(BeanDefinitionRegistry registry, AceConfig aceConfig) {
+    AceClassPathMapperScanner(BeanDefinitionRegistry registry, AceConfig aceConfig) {
         super(registry, false);
         this.aceConfig = aceConfig;
     }
@@ -50,7 +50,7 @@ public class AceClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     }
 
     private String resolveSqlSessionFactoryBeanName(String mapperClassName) {
-        Class<?> mapperInterface = null;
+        Class<?> mapperInterface;
         try {
             mapperInterface = Class.forName(mapperClassName);
         } catch (ClassNotFoundException e) {
