@@ -14,15 +14,18 @@ public abstract class ChangeMethod implements AceMethod {
     private MapperMethod.MethodSignature methodSignature;
     private AceConfig config;
     private String statementName;
+    private ChangeFunction changeFunction;
 
-    public ChangeMethod(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config) {
+    public ChangeMethod(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config,
+                        ChangeFunction changeFunction) {
         this.methodSignature = methodSignature;
         this.statementName = CommonUtils.getStatementName(method);
         this.config = config;
+        this.changeFunction = changeFunction;
     }
 
     @SuppressWarnings("unchecked")
-    protected CompletableFuture<Integer> doExecute(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
+    protected CompletableFuture<Integer> doExecute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
         List<Object> entities = (List<Object>) methodSignature.convertArgsToSqlCommandParam(args);
         int threadCount = CommonUtils.computeThreadPullSize(config.getThreadCount(), entities.size(),
                 config.getUpdateChunkSize());

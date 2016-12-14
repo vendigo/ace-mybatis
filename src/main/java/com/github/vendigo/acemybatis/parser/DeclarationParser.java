@@ -4,16 +4,13 @@ import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.CommonUtils;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
-import com.github.vendigo.acemybatis.method.delete.AsyncDelete;
-import com.github.vendigo.acemybatis.method.delete.SyncDelete;
-import com.github.vendigo.acemybatis.method.insert.AsyncInsert;
-import com.github.vendigo.acemybatis.method.insert.SyncInsert;
+import com.github.vendigo.acemybatis.method.change.*;
 import com.github.vendigo.acemybatis.method.select.ReactiveStreamSelect;
 import com.github.vendigo.acemybatis.method.select.SimpleStreamSelect;
-import com.github.vendigo.acemybatis.method.update.AsyncUpdate;
-import com.github.vendigo.acemybatis.method.update.SyncUpdate;
 import org.apache.ibatis.binding.MapperMethod;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,24 +31,32 @@ public class DeclarationParser {
         MapperMethod mapperMethod = new MapperMethod(mapperInterface, method, config);
         MapperMethod.SqlCommand command = new MapperMethod.SqlCommand(config, mapperInterface, method);
         MapperMethod.MethodSignature methodSignature = new MapperMethod.MethodSignature(config, mapperInterface, method);
-        Optional<AceMethod> parsedMethod = Optional.empty();
+        Optional<AceMethod> parsedMethod;
 
-        switch (command.getType()) {
-            case SELECT:
-                parsedMethod = parseSelect(methodSignature, config, method, aceConfig);
-                break;
-            case INSERT:
-                parsedMethod = parseChange(methodSignature, config, method, aceConfig, SyncInsert::new, AsyncInsert::new);
-                break;
-            case UPDATE:
-                parsedMethod = parseChange(methodSignature, config, method, aceConfig, SyncUpdate::new, AsyncUpdate::new);
-                break;
-            case DELETE:
-                parsedMethod = parseChange(methodSignature, config, method, aceConfig, SyncDelete::new, AsyncDelete::new);
-                break;
+        if (methodSignature.getReturnType().equals(ChangeCollector.class)) {
+            return new CollectorMethod(resolveChangeFunction(command.getType()), method, aceConfig);
+        }
+
+        if (command.getType() == SqlCommandType.SELECT) {
+            parsedMethod = parseSelect(methodSignature, config, method, aceConfig);
+        } else {
+            parsedMethod = parseChange(methodSignature, method, aceConfig, command.getType());
         }
 
         return parsedMethod.orElse(new DelegateMethodImpl(mapperMethod));
+    }
+
+    private static ChangeFunction resolveChangeFunction(SqlCommandType type) {
+        switch (type) {
+            case INSERT:
+                return SqlSession::insert;
+            case UPDATE:
+                return SqlSession::update;
+            case DELETE:
+                return SqlSession::delete;
+        }
+
+        throw new IllegalArgumentException(type + " is not supported for change collector");
     }
 
     private static Optional<AceMethod> parseSelect(MapperMethod.MethodSignature methodSignature, Configuration config,
@@ -68,18 +73,16 @@ public class DeclarationParser {
         return Optional.empty();
     }
 
-    private static Optional<AceMethod> parseChange(MapperMethod.MethodSignature methodSignature, Configuration config,
-                                                   Method method, AceConfig aceConfig,
-                                                   AceMethodSupplier syncMethodSupplier,
-                                                   AceMethodSupplier asyncMethodSupplier) {
+    private static Optional<AceMethod> parseChange(MapperMethod.MethodSignature methodSignature,
+                                                   Method method, AceConfig aceConfig, SqlCommandType commandType) {
         if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
             log.info("Using async version for {}", method.getName());
-            return Optional.of(asyncMethodSupplier.get(method, methodSignature, aceConfig));
+            return Optional.of(new AsyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         } else {
             List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
             if (parameterTypes.size() == 1 && parameterTypes.get(0).equals(List.class)) {
                 log.info("Using sync version for {}", method.getName());
-                return Optional.of(syncMethodSupplier.get(method, methodSignature, aceConfig));
+                return Optional.of(new SyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
             }
         }
         return Optional.empty();
