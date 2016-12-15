@@ -10,6 +10,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Generic implementation for change methods (insert/update/delete).
+ */
 public abstract class ChangeMethod implements AceMethod {
     private MapperMethod.MethodSignature methodSignature;
     private AceConfig config;

@@ -7,6 +7,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Generic method for async batch insert/update/delete.
+ */
 public class AsyncChangeMethod extends ChangeMethod {
 
     public AsyncChangeMethod(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config,

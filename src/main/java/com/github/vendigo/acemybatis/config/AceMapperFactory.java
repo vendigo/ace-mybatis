@@ -8,6 +8,11 @@ import java.lang.reflect.Proxy;
 import static com.github.vendigo.acemybatis.config.AceConfigResolver.resolveConfig;
 import static com.github.vendigo.acemybatis.utils.Validator.notNull;
 
+/**
+ * Can be used for explicit creation ace mappers. Use inner builder for convenient configuring.
+ * For automatic discovering/generating mappers see {@link AceMapperScannerConfigurer}.
+ * @param <T> - Class of mapper interface.
+ */
 public class AceMapperFactory<T> {
     private final Class<T> mapperInterface;
     private final SqlSessionFactory sqlSessionFactory;

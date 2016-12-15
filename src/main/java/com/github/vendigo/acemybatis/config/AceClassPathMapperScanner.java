@@ -11,6 +11,10 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.util.Set;
 
+/**
+ * Scans for the interface annotated with {@link AceMapper} in the given base package.
+ * Creates {@link AceMapperFactoryBean} for each of them.
+ */
 class AceClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
     private final AceConfig aceConfig;
 

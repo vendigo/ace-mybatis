@@ -1,5 +1,9 @@
 package com.github.vendigo.acemybatis.config;
 
+/**
+ * Creates {@link AceConfig}. Overrides values in the given AceConfig
+ * by explicitly specified other parameters (If they greater then 0).
+ */
 class AceConfigResolver {
 
     private AceConfigResolver() {

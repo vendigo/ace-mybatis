@@ -11,6 +11,9 @@ import org.springframework.util.StringUtils;
 
 import static com.github.vendigo.acemybatis.utils.Validator.notNull;
 
+/**
+ * Used for automatic discovering/generating ace mappers. Use inner builder for convenient configuring.
+ */
 public class AceMapperScannerConfigurer implements BeanDefinitionRegistryPostProcessor, ApplicationContextAware {
     private final String basePackage;
     private final AceConfig aceConfig;

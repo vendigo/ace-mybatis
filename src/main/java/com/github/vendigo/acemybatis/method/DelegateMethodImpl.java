@@ -4,6 +4,10 @@ import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+/**
+ * Ace method implementation which delegates to default myBatis implementations
+ * (e.g. select list, insert/update/delete one entry, etc.).
+ */
 public class DelegateMethodImpl implements AceMethod {
     private final MapperMethod mapperMethod;
 

@@ -12,6 +12,10 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * InvocationHandler for generated ace mappers.
+ * @param <T> - type of mapper interface.
+ */
 public class AceProxy<T> implements InvocationHandler, Serializable {
     private final SqlSessionFactory sqlSessionFactory;
     private final Class<T> mapperInterface;

@@ -6,6 +6,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+/**
+ * Task for inserting/updating/deleting bunch of entities in chunks.
+ */
 public class ChangeTask implements Callable<Integer> {
 
     private ChangeFunction changeFunction;

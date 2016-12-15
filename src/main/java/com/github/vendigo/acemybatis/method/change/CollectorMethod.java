@@ -19,7 +19,7 @@ public class CollectorMethod implements AceMethod {
     }
 
     @Override
-    public ChangeCollector execute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
-        return new ChangeCollector(config, sqlSessionFactory, statementName, changeFunction);
+    public SimpleChangeCollector execute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
+        return new SimpleChangeCollector(config, sqlSessionFactory, statementName, changeFunction);
     }
 }

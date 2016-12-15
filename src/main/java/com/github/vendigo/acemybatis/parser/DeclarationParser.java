@@ -22,6 +22,17 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
+/**
+ * Parses method declarations and choose ace method implementation.
+ * Rules
+ * <ul>
+ *     <li>Return type ChangeCollector - {@link CollectorMethod}</li>
+ *     <li>Select statement with countQuery - {@link ReactiveStreamSelect}</li>
+ *     <li>Insert/Update/Delete with return type Completable future - {@link AsyncChangeMethod}</li>
+ *     <li>Insert/Update/Delete with return type int - {@link SyncChangeMethod}</li>
+ *     <li>Otherwise - {@link DelegateMethodImpl}</li>
+ * </ul>
+ */
 public class DeclarationParser {
     private static final Logger log = LoggerFactory.getLogger(DeclarationParser.class);
 

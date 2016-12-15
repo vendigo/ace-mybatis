@@ -8,6 +8,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Task for selecting bunch of entities in chunks into the queue.
+ */
 public class SelectTask implements Runnable {
 
     private String statementName;

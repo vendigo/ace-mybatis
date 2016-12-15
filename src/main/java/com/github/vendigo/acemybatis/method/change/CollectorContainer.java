@@ -6,7 +6,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CollectorContainer {
+/**
+ * Inner mutable container for {@link SimpleChangeCollector}.
+ */
+class CollectorContainer {
     private List<Object> all;
     private List<Object> onInsert;
     private final AceConfig config;
@@ -14,8 +17,8 @@ public class CollectorContainer {
     private final String statementName;
     private final ChangeFunction changeFunction;
 
-    public CollectorContainer(AceConfig config, SqlSessionFactory sqlSessionFactory, String statementName,
-                              ChangeFunction changeFunction) {
+    CollectorContainer(AceConfig config, SqlSessionFactory sqlSessionFactory, String statementName,
+                       ChangeFunction changeFunction) {
         this.config = config;
         this.sqlSessionFactory = sqlSessionFactory;
         this.statementName = statementName;
@@ -24,7 +27,7 @@ public class CollectorContainer {
         onInsert = new ArrayList<>();
     }
 
-    public void accumulate(Object o) {
+    void accumulate(Object o) {
         all.add(o);
         onInsert.add(o);
 
@@ -34,7 +37,7 @@ public class CollectorContainer {
         }
     }
 
-    public List finish() {
+    List finish() {
         if (!onInsert.isEmpty()) {
             ChangeHelper.changeChunk(sqlSessionFactory, onInsert, statementName, changeFunction);
             onInsert.clear();
@@ -42,7 +45,7 @@ public class CollectorContainer {
         return all;
     }
 
-    public CollectorContainer combine(CollectorContainer other) {
+    CollectorContainer combine(CollectorContainer other) {
         this.all.addAll(other.all);
         this.onInsert.addAll(other.onInsert);
         return this;

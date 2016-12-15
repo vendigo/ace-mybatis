@@ -3,6 +3,10 @@ package com.github.vendigo.acemybatis.config;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.FactoryBean;
 
+/**
+ * Creates ace mappers. Is used by {@link AceMapperScannerConfigurer}.
+ * @param <T>
+ */
 class AceMapperFactoryBean<T> implements FactoryBean<T> {
     private final AceMapperFactory<T> proxyFactory;
 

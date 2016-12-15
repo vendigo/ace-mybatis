@@ -11,8 +11,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
-public class ChangeHelper {
-    public static CompletableFuture<Integer> applyAsync(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
+class ChangeHelper {
+    static CompletableFuture<Integer> applyAsync(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
                                                         List<Object> entities, int chunkSize, int threadCount) {
         return CompletableFuture.supplyAsync(() -> {
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
@@ -27,7 +27,7 @@ public class ChangeHelper {
         });
     }
 
-    public static void changeChunk(SqlSessionFactory sqlSessionFactory, List<Object> chunk, String statementName,
+    static void changeChunk(SqlSessionFactory sqlSessionFactory, List<Object> chunk, String statementName,
                                    ChangeFunction changeFunction) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             for (Object entity : chunk) {

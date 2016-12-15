@@ -18,6 +18,9 @@ import java.util.stream.Stream;
 
 import static com.github.vendigo.acemybatis.method.CommonUtils.getStatementName;
 
+/**
+ * Batch async select method implementation. Require explicitly defined countQuery.
+ */
 public class ReactiveStreamSelect implements AceMethod {
 
     private final Method method;
