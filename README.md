@@ -1,7 +1,7 @@
 # ACE-MYBATIS
 
 [![Build Status](https://travis-ci.org/vendigo/ace-mybatis.svg?branch=master)](https://travis-ci.org/vendigo/ace-mybatis)
-[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven/apache-maven.svg)](http://search.maven.org/#search%7Cga%7C1%7Cace-mybatis)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.vendigo/ace-mybatis.svg)](http://search.maven.org/#search%7Cga%7C1%7Cace-mybatis)
 
 Runtime generation efficient implementation for myBatis mappers
 
