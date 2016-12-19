@@ -10,13 +10,14 @@ import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Method;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.List;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.github.vendigo.acemybatis.method.CommonUtils.getStatementName;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Batch async select method implementation. Require explicitly defined countQuery.
@@ -43,10 +44,27 @@ public class ReactiveStreamSelect implements AceMethod {
         int nThreads = CommonUtils.computeThreadPullSize(config.getThreadCount(), count, config.getSelectChunkSize());
         ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
         AtomicInteger offset = new AtomicInteger(0);
-        IntStream.range(0, nThreads).forEach((n) -> executorService.execute(new SelectTask(statementName, parameter,
-                sqlSessionFactory, queue, offset, count,
-                config.getSelectChunkSize())));
+        List<Future<?>> futures = IntStream.range(0, nThreads)
+                .mapToObj((n) -> executorService.submit(new SelectTask(statementName, parameter,
+                        sqlSessionFactory, queue, offset, count, config.getSelectChunkSize())))
+                .collect(toList());
+        closeQueue(queue, futures);
         return queue.jdkStream().limit(count);
+    }
+
+    private void closeQueue(Queue<Object> queue, List<Future<?>> futures) {
+        CompletableFuture.runAsync(() -> {
+            futures.forEach(this::waitForFuture);
+            queue.close();
+        });
+    }
+
+    private void waitForFuture(Future<?> future) {
+        try {
+            future.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private int getCount(SqlSessionFactory sqlSessionFactory, Object parameter) {
