@@ -8,20 +8,27 @@ import org.springframework.beans.factory.FactoryBean;
  * @param <T>
  */
 class AceMapperFactoryBean<T> implements FactoryBean<T> {
-    private final AceMapperFactory<T> proxyFactory;
+    private SqlSessionFactory sqlSessionFactory;
+    private Class<T> mapperInterface;
+    private AceConfig aceConfig;
 
-    AceMapperFactoryBean(Class<T> mapperInterface, SqlSessionFactory sqlSessionFactory, AceConfig aceConfig) {
-        this.proxyFactory = new AceMapperFactory<>(mapperInterface, sqlSessionFactory, aceConfig);
+    AceMapperFactoryBean(Class<T> mapperInterface, AceConfig aceConfig) {
+        this.mapperInterface = mapperInterface;
+        this.aceConfig = aceConfig;
+    }
+
+    public void setSqlSessionFactory(SqlSessionFactory sqlSessionFactory) {
+        this.sqlSessionFactory = sqlSessionFactory;
     }
 
     @Override
     public T getObject() throws Exception {
-        return proxyFactory.create();
+        return new AceMapperFactory<>(mapperInterface, sqlSessionFactory, aceConfig).create();
     }
 
     @Override
     public Class<?> getObjectType() {
-        return proxyFactory.getMapperType();
+        return mapperInterface;
     }
 
     @Override

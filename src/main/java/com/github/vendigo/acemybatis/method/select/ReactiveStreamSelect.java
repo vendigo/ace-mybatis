@@ -11,7 +11,10 @@ import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -48,14 +51,15 @@ public class ReactiveStreamSelect implements AceMethod {
                 .mapToObj((n) -> executorService.submit(new SelectTask(statementName, parameter,
                         sqlSessionFactory, queue, offset, count, config.getSelectChunkSize())))
                 .collect(toList());
-        closeQueue(queue, futures);
+        waitAndClose(futures, queue, executorService);
         return queue.jdkStream().limit(count);
     }
 
-    private void closeQueue(Queue<Object> queue, List<Future<?>> futures) {
+    private void waitAndClose(List<Future<?>> futures, Queue<Object> queue, ExecutorService executorService) {
         CompletableFuture.runAsync(() -> {
             futures.forEach(this::waitForFuture);
             queue.close();
+            executorService.shutdown();
         });
     }
 

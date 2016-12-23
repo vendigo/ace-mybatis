@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
@@ -47,9 +48,13 @@ class AceClassPathMapperScanner extends ClassPathBeanDefinitionScanner {
             String mapperClassName = def.getBeanClassName();
             def.getConstructorArgumentValues().addGenericArgumentValue(mapperClassName);
             def.getConstructorArgumentValues().addGenericArgumentValue(aceConfig);
-            def.getConstructorArgumentValues()
-                    .addGenericArgumentValue(new RuntimeBeanReference(resolveSqlSessionFactoryBeanName(mapperClassName)));
             def.setBeanClass(AceMapperFactoryBean.class);
+            String ssfBeanName = resolveSqlSessionFactoryBeanName(mapperClassName);
+            if (!ssfBeanName.isEmpty()) {
+                def.getPropertyValues().add("sqlSessionFactory", new RuntimeBeanReference(ssfBeanName));
+            } else {
+                def.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
+            }
         }
     }
 

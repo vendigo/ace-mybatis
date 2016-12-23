@@ -24,10 +24,6 @@ public class AceMapperFactory<T> {
         this.aceConfig = notNull(aceConfig);
     }
 
-    public Class<T> getMapperType() {
-        return mapperInterface;
-    }
-
     @SuppressWarnings("unchecked")
     public T create() {
         return (T) Proxy.newProxyInstance(mapperInterface.getClassLoader(), new Class[]{mapperInterface},

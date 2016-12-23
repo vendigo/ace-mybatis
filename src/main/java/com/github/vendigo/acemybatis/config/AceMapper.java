@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 public @interface AceMapper {
     /**
      * Bean name for sqlSessionFactory which will be used for particular mapper.
+     * If not defined, it will search for only SqlSessionFactory bean in the context.
      */
-    String sqlSessionFactoryBeanName() default "sqlSessionFactory";
+    String sqlSessionFactoryBeanName() default "";
 }

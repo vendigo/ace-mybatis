@@ -33,7 +33,7 @@ public class SpringTestConfig {
     }
 
     @Bean
-    public static AceMapperScannerConfigurer mapperScannerConfigurer() {
+    public AceMapperScannerConfigurer mapperScannerConfigurer() {
         return AceMapperScannerConfigurer.builder()
                 .basePackage("com.github.vendigo.acemybatis.test.app")
                 .selectChunkSize(2000)
