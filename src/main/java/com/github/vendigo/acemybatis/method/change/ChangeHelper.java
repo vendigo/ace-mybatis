@@ -18,12 +18,14 @@ class ChangeHelper {
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
             List<List<Object>> parts = divideOnParts(entities, threadCount);
 
-            return IntStream.range(0, threadCount)
+            int result = IntStream.range(0, threadCount)
                     .mapToObj((n) -> executorService.submit(new ChangeTask(changeFunction, sqlSessionFactory, statementName, parts.get(n),
                             chunkSize)))
                     .map(ChangeHelper::getFromFuture)
                     .mapToInt(Integer::valueOf)
                     .sum();
+            executorService.shutdown();
+            return result;
         });
     }
 

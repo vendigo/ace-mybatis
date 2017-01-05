@@ -12,8 +12,11 @@ import static com.github.vendigo.acemybatis.utils.Validator.isPositive;
  * </ul>
  */
 public class AceConfig {
-    private int selectChunkSize = 5000;
-    private int updateChunkSize = 2000;
+    public static final int DEFAULT_SELECT_CHUNK_SIZE = 10_000;
+    public static final int DEFAULT_CHANGE_CHUNK_SIZE = 2_000;
+
+    private int selectChunkSize = DEFAULT_SELECT_CHUNK_SIZE;
+    private int updateChunkSize = DEFAULT_CHANGE_CHUNK_SIZE;
     private int threadCount = 0;
 
     AceConfig() {

@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -35,6 +36,8 @@ import java.util.stream.Stream;
  */
 public class DeclarationParser {
     private static final Logger log = LoggerFactory.getLogger(DeclarationParser.class);
+    public static final EnumSet<SqlCommandType> CHANGE_COMMANDS = EnumSet.of(SqlCommandType.INSERT, SqlCommandType.UPDATE,
+            SqlCommandType.DELETE);
 
     public static AceMethod parseMethodDeclaration(AceConfig aceConfig, Class<?> mapperInterface,
                                                    SqlSessionFactory sqlSessionFactory, Method method) {
@@ -44,7 +47,7 @@ public class DeclarationParser {
         MapperMethod.MethodSignature methodSignature = new MapperMethod.MethodSignature(config, mapperInterface, method);
         Optional<AceMethod> parsedMethod;
 
-        if (methodSignature.getReturnType().equals(ChangeCollector.class)) {
+        if (CHANGE_COMMANDS.contains(command.getType()) && methodSignature.getReturnType().equals(ChangeCollector.class)) {
             return new CollectorMethod(resolveChangeFunction(command.getType()), method, aceConfig);
         }
 
