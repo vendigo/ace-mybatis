@@ -38,6 +38,8 @@ public class SpringTestConfig {
                 .basePackage("com.github.vendigo.acemybatis.test.app")
                 .selectChunkSize(2000)
                 .updateChunkSize(1000)
+                .listName("list")
+                .elementName("e")
                 .build();
     }
 

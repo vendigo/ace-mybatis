@@ -61,6 +61,8 @@ public class AceMapperScannerConfigurer implements BeanDefinitionRegistryPostPro
         private int selectChunkSize;
         private int updateChunkSize;
         private int threadCount;
+        private String listName;
+        private String elementName;
 
         public Builder basePackage(String basePackage) {
             this.basePackage = basePackage;
@@ -87,9 +89,19 @@ public class AceMapperScannerConfigurer implements BeanDefinitionRegistryPostPro
             return this;
         }
 
+        public Builder listName(String listName) {
+            this.listName = listName;
+            return this;
+        }
+
+        public Builder elementName(String elementName) {
+            this.elementName = elementName;
+            return this;
+        }
+
         public AceMapperScannerConfigurer build() {
             return new AceMapperScannerConfigurer(basePackage, AceConfigResolver.resolveConfig(config,
-                    selectChunkSize, updateChunkSize, threadCount));
+                    selectChunkSize, updateChunkSize, threadCount, listName, elementName));
         }
     }
 }

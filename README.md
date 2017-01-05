@@ -5,9 +5,9 @@
 
 Runtime generation efficient implementation for myBatis mappers
 
-## Configuration
+## Dependency
 
-### Maven dependency
+### Maven
 
 ```xml
 <dependency>
@@ -16,6 +16,17 @@ Runtime generation efficient implementation for myBatis mappers
  <version>0.0.2</version>
 </dependency>
 ```
+
+### Gradle
+
+```groovy
+compile group: 'com.github.vendigo', name: 'ace-mybatis', version: '0.0.2'
+```
+
+## Configuration
+
+There are two ways to configure ace-mybatis: declare each mapper explicitly (via AceMapperFactory) or
+setup auto discovering (via AceMapperScannerConfigurer).
 
 ### Explicit mapper creation
 
@@ -27,9 +38,6 @@ public UserMapper userMapper(SqlSessionFactory sqlSessionFactory) {
         return AceMapperFactory.<UserMapper>builder()
                 .mapperInterface(UserMapper.class)
                 .sqlSessionFactory(sqlSessionFactory)
-                .selectChunkSize(2000)
-                .updateChunkSize(1000)
-                .threadCount(4)
                 .build();
     }
 }
@@ -49,13 +57,20 @@ class SpringConfig {
     public AceMapperScannerConfigurer mapperScannerConfigurer() {
         return AceMapperScannerConfigurer.builder()
                 .basePackage("com.github.vendigo.acemybatis.test.app")
-                .selectChunkSize(2000)
-                .updateChunkSize(1000)
-                .threadCount(4)
                 .build();
     }
 }
 ```
+
+### Additional settings
+
+Behaviour is configurable via additional properties:
+
+* selectChunkSize
+* changeChunkSize
+* threadCount
+* listName
+* elementName
 
 When using more than one sqlSessionFactory, bean name should be specified in AceMapper annotation.
 

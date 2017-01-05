@@ -32,7 +32,7 @@ public interface UserMapper {
     @NonBatchMethod
     void insertListAsOne(List<User> users);
 
-    void insertWithAdditionalParameters(@Param("entities")List<User> users, @Param("customCity")String customCity);
+    void insertWithAdditionalParameters(@Param("list")List<User> users, @Param("customCity")String customCity);
 
     CompletableFuture<Integer> insertAsync(List<User> users);
 

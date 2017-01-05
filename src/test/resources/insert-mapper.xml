@@ -117,10 +117,10 @@
         CITY
         )
         VALUES (
-        #{entity.firstName},
-        #{entity.lastName},
-        #{entity.email},
-        #{entity.phoneNumber},
+        #{e.firstName},
+        #{e.lastName},
+        #{e.email},
+        #{e.phoneNumber},
         #{customCity}
         )
     </insert>

@@ -41,6 +41,8 @@ public class AceMapperFactory<T> {
         private int selectChunkSize;
         private int updateChunkSize;
         private int threadCount;
+        private String listName;
+        private String elementName;
 
         public Builder<T> mapperInterface(Class<T> mapperInterface) {
             this.mapperInterface = mapperInterface;
@@ -72,9 +74,19 @@ public class AceMapperFactory<T> {
             return this;
         }
 
+        public Builder<T> listName(String listName) {
+            this.listName = listName;
+            return this;
+        }
+
+        public Builder<T> elementName(String elementName) {
+            this.elementName = elementName;
+            return this;
+        }
+
         public T build() {
             return new AceMapperFactory<>(mapperInterface, sqlSessionFactory, resolveConfig(config,
-                    selectChunkSize, updateChunkSize, threadCount)).create();
+                    selectChunkSize, updateChunkSize, threadCount, listName, elementName)).create();
         }
     }
 }
