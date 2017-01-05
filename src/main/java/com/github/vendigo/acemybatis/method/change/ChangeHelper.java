@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.method.change;
 
+import com.github.vendigo.acemybatis.parser.ParamsHolder;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -13,10 +14,10 @@ import java.util.stream.IntStream;
 
 class ChangeHelper {
     static CompletableFuture<Integer> applyAsync(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
-                                                        List<Object> entities, int chunkSize, int threadCount) {
+                                                 ParamsHolder params, int chunkSize, int threadCount) {
         return CompletableFuture.supplyAsync(() -> {
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-            List<List<Object>> parts = divideOnParts(entities, threadCount);
+            List<ParamsHolder> parts = divideOnParts(params, threadCount);
 
             int result = IntStream.range(0, threadCount)
                     .mapToObj((n) -> executorService.submit(new ChangeTask(changeFunction, sqlSessionFactory, statementName, parts.get(n),
@@ -39,17 +40,20 @@ class ChangeHelper {
         }
     }
 
-    static List<List<Object>> divideOnParts(List<Object> list, int partsCount) {
-        List<List<Object>> parts = new ArrayList<>();
-        int partSize = list.size() / partsCount;
+    static List<ParamsHolder> divideOnParts(ParamsHolder params, int partsCount) {
+        List<Object> entities = params.getEntities();
+
+        List<ParamsHolder> parts = new ArrayList<>();
+        int partSize = entities.size() / partsCount;
         int left = 0;
         int right = partSize;
         for (int i = 0; i < partsCount; i++) {
-            parts.add(list.subList(left, right));
+            List<Object> partOfEntities = entities.subList(left, right);
+            parts.add(new ParamsHolder(partOfEntities, params.getOtherParams()));
             left = right;
             right += partSize;
             if (i == partsCount - 2) {
-                right = list.size();
+                right = entities.size();
             }
         }
         return parts;

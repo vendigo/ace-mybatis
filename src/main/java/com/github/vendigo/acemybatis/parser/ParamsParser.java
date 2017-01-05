@@ -2,12 +2,9 @@ package com.github.vendigo.acemybatis.parser;
 
 import org.apache.ibatis.binding.MapperMethod;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.IllegalFormatException;
-import java.util.Map;
+import java.util.*;
 
-public class ParameterParser {
+public class ParamsParser {
 
     public static final String ENTITIES_KEY = "entities";
 
@@ -17,14 +14,24 @@ public class ParameterParser {
         Collection<Object> entities;
         Map<String, Object> otherParams = new HashMap<>();
         if (parsedParams instanceof Collection) {
-            entities = (Collection<Object>)parsedParams;
+            entities = (Collection<Object>) parsedParams;
         } else if (parsedParams instanceof Map) {
-            Map<String, Object> paramMap = (Map<String, Object>)parsedParams;
-            entities = (Collection<Object>)paramMap.remove(ENTITIES_KEY);
+            Map<String, Object> paramMap = (Map<String, Object>) parsedParams;
+            entities = (Collection<Object>) paramMap.remove(ENTITIES_KEY);
         } else {
             throw new IllegalArgumentException("Failed to parse parameters");
         }
 
-        return new ParamsHolder(entities, otherParams);
+        List<Object> entitiesAsList = convertToList(entities);
+        return new ParamsHolder(entitiesAsList, otherParams);
+    }
+
+    private static List<Object> convertToList(Collection<Object> entities) {
+        if (entities instanceof List) {
+            return (List<Object>)entities;
+        }
+        List<Object> newList = new ArrayList<>();
+        newList.addAll(entities);
+        return newList;
     }
 }

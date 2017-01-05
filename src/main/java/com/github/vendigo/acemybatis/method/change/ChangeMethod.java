@@ -3,11 +3,12 @@ package com.github.vendigo.acemybatis.method.change;
 import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.CommonUtils;
+import com.github.vendigo.acemybatis.parser.ParamsHolder;
+import com.github.vendigo.acemybatis.parser.ParamsParser;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -29,10 +30,10 @@ public abstract class ChangeMethod implements AceMethod {
 
     @SuppressWarnings("unchecked")
     protected CompletableFuture<Integer> doExecute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
-        List<Object> entities = (List<Object>) methodSignature.convertArgsToSqlCommandParam(args);
-        int threadCount = CommonUtils.computeThreadPullSize(config.getThreadCount(), entities.size(),
+        ParamsHolder params = ParamsParser.parseParams(methodSignature, args);
+        int threadCount = CommonUtils.computeThreadPullSize(config.getThreadCount(), params.getEntities().size(),
                 config.getUpdateChunkSize());
-        return ChangeHelper.applyAsync(changeFunction, sqlSessionFactory, statementName, entities,
+        return ChangeHelper.applyAsync(changeFunction, sqlSessionFactory, statementName, params,
                 config.getUpdateChunkSize(),
                 threadCount);
     }
