@@ -18,6 +18,7 @@ public class ParamsParser {
         } else if (parsedParams instanceof Map) {
             Map<String, Object> paramMap = (Map<String, Object>) parsedParams;
             entities = (Collection<Object>) paramMap.remove(ENTITIES_KEY);
+            otherParams = paramMap;
         } else {
             throw new IllegalArgumentException("Failed to parse parameters");
         }

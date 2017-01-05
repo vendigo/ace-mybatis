@@ -28,6 +28,8 @@ public interface UserMapper {
 
     void insertSync(List<User> users);
 
+    void insertWithAdditionalParameters(@Param("entities")List<User> users, @Param("customCity")String customCity);
+
     CompletableFuture<Integer> insertAsync(List<User> users);
 
     CompletableFuture<Void> insertAsyncVoid(List<User> users);

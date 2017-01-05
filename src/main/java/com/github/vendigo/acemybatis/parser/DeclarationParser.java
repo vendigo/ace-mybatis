@@ -7,6 +7,7 @@ import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
 import com.github.vendigo.acemybatis.method.change.*;
 import com.github.vendigo.acemybatis.method.select.ReactiveStreamSelect;
 import com.github.vendigo.acemybatis.method.select.SimpleStreamSelect;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.Configuration;
@@ -16,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
@@ -27,11 +25,11 @@ import java.util.stream.Stream;
  * Parses method declarations and choose ace method implementation.
  * Rules
  * <ul>
- *     <li>Return type ChangeCollector - {@link CollectorMethod}</li>
- *     <li>Select statement with countQuery - {@link ReactiveStreamSelect}</li>
- *     <li>Insert/Update/Delete with return type Completable future - {@link AsyncChangeMethod}</li>
- *     <li>Insert/Update/Delete with return type int - {@link SyncChangeMethod}</li>
- *     <li>Otherwise - {@link DelegateMethodImpl}</li>
+ * <li>Return type ChangeCollector - {@link CollectorMethod}</li>
+ * <li>Select statement with countQuery - {@link ReactiveStreamSelect}</li>
+ * <li>Insert/Update/Delete with return type Completable future - {@link AsyncChangeMethod}</li>
+ * <li>Insert/Update/Delete with return type int - {@link SyncChangeMethod}</li>
+ * <li>Otherwise - {@link DelegateMethodImpl}</li>
  * </ul>
  */
 public class DeclarationParser {
@@ -45,7 +43,7 @@ public class DeclarationParser {
         MapperMethod mapperMethod = new MapperMethod(mapperInterface, method, config);
         MapperMethod.SqlCommand command = new MapperMethod.SqlCommand(config, mapperInterface, method);
         MapperMethod.MethodSignature methodSignature = new MapperMethod.MethodSignature(config, mapperInterface, method);
-        Optional<AceMethod> parsedMethod;
+        Optional<AceMethod> parsedMethod = Optional.empty();
 
         if (CHANGE_COMMANDS.contains(command.getType()) && methodSignature.getReturnType().equals(ChangeCollector.class)) {
             return new CollectorMethod(resolveChangeFunction(command.getType()), method, aceConfig);
@@ -53,7 +51,7 @@ public class DeclarationParser {
 
         if (command.getType() == SqlCommandType.SELECT) {
             parsedMethod = parseSelect(methodSignature, config, method, aceConfig);
-        } else {
+        } else if (CHANGE_COMMANDS.contains(command.getType())) {
             parsedMethod = parseChange(methodSignature, method, aceConfig, command.getType());
         }
 
@@ -92,13 +90,26 @@ public class DeclarationParser {
         if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
             log.info("Using async version for {}", method.getName());
             return Optional.of(new AsyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
-        } else {
-            List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
-            if (parameterTypes.size() == 1 && parameterTypes.get(0).equals(List.class)) {
-                log.info("Using sync version for {}", method.getName());
-                return Optional.of(new SyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
-            }
+        } else if (isSyncChangeMethod(method)) {
+            log.info("Using sync version for {}", method.getName());
+            return Optional.of(new SyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         }
+        log.info("Delegate to standard myBatis implementation");
         return Optional.empty();
+    }
+
+    private static boolean isSyncChangeMethod(Method method) {
+        List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
+        if (parameterTypes.size() == 1) {
+            return Collection.class.isAssignableFrom(parameterTypes.get(0));
+        } else {
+            return Stream.of(method.getParameterAnnotations())
+                    .flatMap(Stream::of)
+                    .filter(a -> a.annotationType().equals(Param.class))
+                    .map(a -> ((Param) a).value())
+                    .filter(v -> v.equals(ParamsParser.ENTITIES_KEY))
+                    .findFirst()
+                    .isPresent();
+        }
     }
 }

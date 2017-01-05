@@ -4,6 +4,9 @@ import com.github.vendigo.acemybatis.parser.ParamsHolder;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 /**
@@ -11,6 +14,7 @@ import java.util.concurrent.Callable;
  */
 public class ChangeTask implements Callable<Integer> {
 
+    public static final String ENTITY_KEY = "entity";
     private ChangeFunction changeFunction;
     private SqlSessionFactory sqlSessionFactory;
     private String statementName;
@@ -29,10 +33,12 @@ public class ChangeTask implements Callable<Integer> {
     @Override
     public Integer call() throws Exception {
         Integer changed = 0;
+        List<Object> entities = params.getEntities();
+        Map<String, Object> otherParams = params.getOtherParams();
 
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-            for (Object entity : params.getEntities()) {
-                changed += changeFunction.apply(sqlSession, statementName, entity);
+            for (Object entity : entities) {
+                changed += changeFunction.apply(sqlSession, statementName, formatParam(entity, otherParams));
                 if (changed % chunkSize == 0) {
                     sqlSession.commit();
                 }
@@ -40,5 +46,16 @@ public class ChangeTask implements Callable<Integer> {
             sqlSession.commit();
         }
         return changed;
+    }
+
+    private Object formatParam(Object entity, Map<String, Object> otherParams) {
+        if (otherParams.isEmpty()) {
+            return entity;
+        } else {
+            Map<String, Object> param = new HashMap<>();
+            param.putAll(otherParams);
+            param.put(ENTITY_KEY, entity);
+            return param;
+        }
     }
 }

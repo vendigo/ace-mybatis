@@ -17,13 +17,14 @@ import static org.hamcrest.Matchers.hasSize;
 @ContextConfiguration(classes = {SpringTestConfig.class})
 public abstract class AbstractTest {
 
-    protected final User petya = new User("Petya", "Pomagay", "illhelpyou@gmail.com", "25315", "Nizhyn");
-    protected final User boris = new User("Boris", "Britva", "boris50@gmail.com", "344", "London");
-    protected final User eric = new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park");
-    protected final User galya = new User("Galya", "Ivanova", "galya_ivanova@gmail.com", "54915", "Konotop");
-    protected final User ostin = new User("Ostin", "Lyapunov", "ostin_lyapota@in.ua", "54915", "Brovary");
+    protected User petya = new User("Petya", "Pomagay", "illhelpyou@gmail.com", "25315", "Nizhyn");
+    protected User boris = new User("Boris", "Britva", "boris50@gmail.com", "344", "London");
+    protected User eric = new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park");
+    protected User galya = new User("Galya", "Ivanova", "galya_ivanova@gmail.com", "54915", "Konotop");
+    protected User ostin = new User("Ostin", "Lyapunov", "ostin_lyapota@in.ua", "54915", "Brovary");
     protected final List<User> users = Arrays.asList(petya, boris, eric, galya, ostin);
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     protected UserMapper userMapper;
     @Autowired

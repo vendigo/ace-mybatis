@@ -89,4 +89,21 @@
         )
     </insert>
 
+    <insert id="insertWithAdditionalParameters" parameterType="map">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY
+        )
+        VALUES (
+        #{entity.firstName},
+        #{entity.lastName},
+        #{entity.email},
+        #{entity.phoneNumber},
+        #{customCity}
+        )
+    </insert>
+
 </mapper>
