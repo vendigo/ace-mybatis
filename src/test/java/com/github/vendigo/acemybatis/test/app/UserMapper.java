@@ -1,6 +1,7 @@
 package com.github.vendigo.acemybatis.test.app;
 
 import com.github.vendigo.acemybatis.config.AceMapper;
+import com.github.vendigo.acemybatis.config.NonBatchMethod;
 import com.github.vendigo.acemybatis.method.change.ChangeCollector;
 import org.apache.ibatis.annotations.Param;
 
@@ -27,6 +28,9 @@ public interface UserMapper {
     void insertOne(User user);
 
     void insertSync(List<User> users);
+
+    @NonBatchMethod
+    void insertListAsOne(List<User> users);
 
     void insertWithAdditionalParameters(@Param("entities")List<User> users, @Param("customCity")String customCity);
 

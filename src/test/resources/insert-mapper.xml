@@ -38,6 +38,25 @@
         )
     </insert>
 
+    <insert id="insertListAsOne" parameterType="java.util.List">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY
+        )
+        VALUES (
+        <foreach collection="list" item="element" separator="),(">
+            #{element.firstName},
+            #{element.lastName},
+            #{element.email},
+            #{element.phoneNumber},
+            #{element.city}
+        </foreach>
+        )
+    </insert>
+
     <insert id="insertAsync" parameterType="com.github.vendigo.acemybatis.test.app.User">
         INSERT INTO USER (
         FIRST_NAME,

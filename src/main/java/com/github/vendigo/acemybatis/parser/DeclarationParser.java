@@ -1,6 +1,7 @@
 package com.github.vendigo.acemybatis.parser;
 
 import com.github.vendigo.acemybatis.config.AceConfig;
+import com.github.vendigo.acemybatis.config.NonBatchMethod;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.CommonUtils;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
@@ -90,7 +91,7 @@ public class DeclarationParser {
         if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
             log.info("Using async version for {}", method.getName());
             return Optional.of(new AsyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
-        } else if (isSyncChangeMethod(method)) {
+        } else if (isSyncChangeMethod(aceConfig, method)) {
             log.info("Using sync version for {}", method.getName());
             return Optional.of(new SyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         }
@@ -98,7 +99,10 @@ public class DeclarationParser {
         return Optional.empty();
     }
 
-    private static boolean isSyncChangeMethod(Method method) {
+    private static boolean isSyncChangeMethod(AceConfig aceConfig, Method method) {
+        if (method.isAnnotationPresent(NonBatchMethod.class)) {
+            return false;
+        }
         List<Class<?>> parameterTypes = Arrays.asList(method.getParameterTypes());
         if (parameterTypes.size() == 1) {
             return Collection.class.isAssignableFrom(parameterTypes.get(0));
@@ -107,7 +111,7 @@ public class DeclarationParser {
                     .flatMap(Stream::of)
                     .filter(a -> a.annotationType().equals(Param.class))
                     .map(a -> ((Param) a).value())
-                    .filter(v -> v.equals(ParamsParser.ENTITIES_KEY))
+                    .filter(v -> v.equals(aceConfig.getListName()))
                     .findFirst()
                     .isPresent();
         }

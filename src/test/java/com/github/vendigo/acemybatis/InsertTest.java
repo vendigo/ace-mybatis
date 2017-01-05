@@ -35,6 +35,13 @@ public class InsertTest extends AbstractTest {
     }
 
     @Test
+    public void insertListAsOne() throws Exception {
+        userMapper.insertListAsOne(users);
+        List<User> actualResults = userTestDao.selectAll();
+        assertCollections(actualResults, users);
+    }
+
+    @Test
     public void insertWithAdditionalParameters() throws Exception {
         userMapper.insertWithAdditionalParameters(users, "Kiev");
         List<User> actualResults = userTestDao.selectAll();

@@ -30,10 +30,10 @@ public abstract class ChangeMethod implements AceMethod {
 
     @SuppressWarnings("unchecked")
     protected CompletableFuture<Integer> doExecute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
-        ParamsHolder params = ParamsParser.parseParams(methodSignature, args);
+        ParamsHolder params = ParamsParser.parseParams(config, methodSignature, args);
         int threadCount = CommonUtils.computeThreadPullSize(config.getThreadCount(), params.getEntities().size(),
                 config.getUpdateChunkSize());
-        return ChangeHelper.applyAsync(changeFunction, sqlSessionFactory, statementName, params,
+        return ChangeHelper.applyAsync(config, changeFunction, sqlSessionFactory, statementName, params,
                 config.getUpdateChunkSize(),
                 threadCount);
     }

@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.method.change;
 
+import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.parser.ParamsHolder;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -13,14 +14,14 @@ import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
 class ChangeHelper {
-    static CompletableFuture<Integer> applyAsync(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
+    static CompletableFuture<Integer> applyAsync(AceConfig config, ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
                                                  ParamsHolder params, int chunkSize, int threadCount) {
         return CompletableFuture.supplyAsync(() -> {
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
             List<ParamsHolder> parts = divideOnParts(params, threadCount);
 
             int result = IntStream.range(0, threadCount)
-                    .mapToObj((n) -> executorService.submit(new ChangeTask(changeFunction, sqlSessionFactory, statementName, parts.get(n),
+                    .mapToObj((n) -> executorService.submit(new ChangeTask(config, changeFunction, sqlSessionFactory, statementName, parts.get(n),
                             chunkSize)))
                     .map(ChangeHelper::getFromFuture)
                     .mapToInt(Integer::valueOf)

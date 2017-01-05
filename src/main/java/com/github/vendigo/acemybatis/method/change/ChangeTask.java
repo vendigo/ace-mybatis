@@ -1,5 +1,6 @@
 package com.github.vendigo.acemybatis.method.change;
 
+import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.parser.ParamsHolder;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -13,16 +14,16 @@ import java.util.concurrent.Callable;
  * Task for inserting/updating/deleting bunch of entities in chunks.
  */
 public class ChangeTask implements Callable<Integer> {
-
-    public static final String ENTITY_KEY = "entity";
+    private AceConfig config;
     private ChangeFunction changeFunction;
     private SqlSessionFactory sqlSessionFactory;
     private String statementName;
     private ParamsHolder params;
     private Integer chunkSize;
 
-    public ChangeTask(ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
+    public ChangeTask(AceConfig config, ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
                       ParamsHolder params, Integer chunkSize) {
+        this.config = config;
         this.changeFunction = changeFunction;
         this.sqlSessionFactory = sqlSessionFactory;
         this.statementName = statementName;
@@ -54,7 +55,7 @@ public class ChangeTask implements Callable<Integer> {
         } else {
             Map<String, Object> param = new HashMap<>();
             param.putAll(otherParams);
-            param.put(ENTITY_KEY, entity);
+            param.put(config.getElementName(), entity);
             return param;
         }
     }

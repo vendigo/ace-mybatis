@@ -1,15 +1,13 @@
 package com.github.vendigo.acemybatis.parser;
 
+import com.github.vendigo.acemybatis.config.AceConfig;
 import org.apache.ibatis.binding.MapperMethod;
 
 import java.util.*;
 
 public class ParamsParser {
-
-    public static final String ENTITIES_KEY = "entities";
-
     @SuppressWarnings("unchecked")
-    public static ParamsHolder parseParams(MapperMethod.MethodSignature methodSignature, Object[] args) {
+    public static ParamsHolder parseParams(AceConfig aceConfig, MapperMethod.MethodSignature methodSignature, Object[] args) {
         Object parsedParams = methodSignature.convertArgsToSqlCommandParam(args);
         Collection<Object> entities;
         Map<String, Object> otherParams = new HashMap<>();
@@ -17,7 +15,7 @@ public class ParamsParser {
             entities = (Collection<Object>) parsedParams;
         } else if (parsedParams instanceof Map) {
             Map<String, Object> paramMap = (Map<String, Object>) parsedParams;
-            entities = (Collection<Object>) paramMap.remove(ENTITIES_KEY);
+            entities = (Collection<Object>) paramMap.remove(aceConfig.getListName());
             otherParams = paramMap;
         } else {
             throw new IllegalArgumentException("Failed to parse parameters");
