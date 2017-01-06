@@ -2,6 +2,7 @@ package com.github.vendigo.acemybatis.method.change;
 
 import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.parser.ParamsHolder;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -37,7 +38,7 @@ public class ChangeTask implements Callable<Integer> {
         List<Object> entities = params.getEntities();
         Map<String, Object> otherParams = params.getOtherParams();
 
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
             for (Object entity : entities) {
                 changed += changeFunction.apply(sqlSession, statementName, formatParam(entity, otherParams));
                 if (changed % chunkSize == 0) {
