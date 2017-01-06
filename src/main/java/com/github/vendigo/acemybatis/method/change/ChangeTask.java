@@ -34,20 +34,22 @@ public class ChangeTask implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        Integer changed = 0;
+        Integer i = 0;
         List<Object> entities = params.getEntities();
         Map<String, Object> otherParams = params.getOtherParams();
 
         try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
             for (Object entity : entities) {
-                changed += changeFunction.apply(sqlSession, statementName, formatParam(entity, otherParams));
-                if (changed % chunkSize == 0) {
+                changeFunction.apply(sqlSession, statementName, formatParam(entity, otherParams));
+                i++;
+                if (i % chunkSize == 0) {
                     sqlSession.commit();
                 }
             }
             sqlSession.commit();
         }
-        return changed;
+        //In batch mode sqlSession returns incorrect number of affected rows. We presume that one call changes one row.
+        return i;
     }
 
     private Object formatParam(Object entity, Map<String, Object> otherParams) {

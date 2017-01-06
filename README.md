@@ -9,6 +9,14 @@ This project can be described in few ways:
 * Declarative support for batch operations in myBatis.
 * Something like: Spring Data for myBatis.
 
+## Contents
+
+* [Why?](#why)
+* [Features](#features)
+* [Dependency](#dependency)
+* [Configuration](#configuration)
+* [Examples](#examples)
+
 ## Why?
 
 Everyone who used myBatis should ask: MyBatis generates implementation for mappers out of the box,
@@ -20,16 +28,16 @@ Short answer:
 * ace-mybatis adds declarative support for batch operations. (Standard myBatis implementations cannot be used for
 inserting/updating big amount of data.)
 
-[Read more...](doc/mybatis-batch-operations.md)
+[Read more...](docs/mybatis-batch-operations.md)
 
 ## Features
 
 When using ace-mybatis all standard mybatis declarations are available as well as additional methods.
 
-* [Stream select/Reactive stream select](Stream select/Reactive stream select)
-* [Batch insert/update/delete](Batch insert/update/delete)
-* [Async batch insert/update/delete.](Async batch insert/update/delete)
-* [Insert/update/delete collector](Insert/update/delete collector)
+* [Stream select/Reactive stream select](#stream-selectreactive-stream-select)
+* [Batch insert/update/delete](#batch-insertupdatedelete)
+* [Async batch insert/update/delete](#async-batch-insertupdatedelete)
+* [Insert/update/delete collector](#insertupdatedelete-collector)
 
 ### Stream select/Reactive stream select
 
@@ -75,7 +83,7 @@ In real cases plain select is more efficient.
 
 ### Batch insert/update/delete
 
-Declare insert method which accepts one parameter of type Collection (or subtypes).
+Declare insert method which accepts one parameter of type Collection (or subtypes)
 or explicitly say what parameter should be batched.
 
 ```java
@@ -84,7 +92,8 @@ public interface UserMapper {
     int insertUsers(List<User> users);
     //Return type can be void.
     void insertUsers2(List<User> users);
-    //By default parameter with name "entities" will be batched. (This param name is configurable via property listName.)
+    //By default parameter with name "entities" will be batched.
+    // (This param name is configurable via property listName.)
     int insertFlowUsers(@Param("entities")List<User> users, @Param("flowId")Integer flowId);
     //Explicitly say that collection should not be batched.
     @NonBatchMethod
@@ -161,12 +170,13 @@ Method names in xml are matched with interface methods by name.
 
 ### Async batch insert/update/delete
 
-If you declare return type as CompletableFuture<Void> or CompletableFuture<Integer>
+If you declare return type as CompletableFuture
 method will immediately return and perform operations asynchronously.
 
 ```java
 public interface UserMapper {
-    CompletableFuture<Integer> insertUsers(List<User> users);
+    //It can be CompletableFuture<Integer> as well
+    CompletableFuture<Void> insertUsers(List<User> users);
     //The same works with updates and deletes
     CompletableFuture<Integer> updateUsers(List<User> users);
 }
@@ -229,8 +239,8 @@ compile group: 'com.github.vendigo', name: 'ace-mybatis', version: '0.0.2'
 
 ## Configuration
 
-There are two ways to configure ace-mybatis: declare each mapper explicitly (via AceMapperFactory) or
-setup auto discovering (via AceMapperScannerConfigurer).
+There are two ways to configure ace-mybatis: declare each mapper explicitly or
+setup auto discovering.
 
 ### Explicit mapper creation
 
@@ -286,7 +296,7 @@ Behaviour is configurable via additional properties:
 
 * selectChunkSize - chunk size for reactive stream select (The one with count query). 10000 by default.
 * changeChunkSize - chunk size for batch insert/update/delete methods. 2000 by default.
-* threadCount - thread count for batch inserting/reactive select.
+* threadCount - thread count for batch methods/reactive select.
 Computed based on available processors if not specified. Automatic set to 1 for small amount of data.
 * listName - parameter name for batched list ("entities" by default).
 * elementName - parameter name for batched item (entity by default).
@@ -317,6 +327,7 @@ class SpringConfig {
                     .build();
         }
 
+    //Config as separate bean
     @Bean
     public AceConfig aceConfig() {
         AceConfig aceConfig = new AceConfig();
@@ -329,7 +340,7 @@ class SpringConfig {
             return AceMapperFactory.<UserMapper>builder()
                     .mapperInterface(UserMapper.class)
                     .sqlSessionFactory(sqlSessionFactory)
-                    .config(aceConfig()) //specify config bean
+                    .config(aceConfig()) //use config bean
                     .selectChunkSize(20000) //plus additional properties
                     .setChangeChunkSize(1500) //override some values from aceConfig() bean
                     .build();
@@ -339,7 +350,7 @@ class SpringConfig {
 
 ## Examples
 
-Examples can be found in [tests](src/tests)
+Examples can be found in [tests](src/test)
 or in companion repository [ace-mybatis-examples](https://github.com/vendigo/ace-mybatis-examples).
 
 Comments and pull requests are welcome.
