@@ -3,7 +3,7 @@ package com.github.vendigo.acemybatis.proxy;
 import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.parser.DeclarationParser;
-import org.apache.ibatis.reflection.ExceptionUtil;
+import com.github.vendigo.acemybatis.utils.ExceptionUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.io.Serializable;
@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * InvocationHandler for generated ace mappers.
+ *
  * @param <T> - type of mapper interface.
  */
 public class AceProxy<T> implements InvocationHandler, Serializable {
@@ -30,15 +31,15 @@ public class AceProxy<T> implements InvocationHandler, Serializable {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (Object.class.equals(method.getDeclaringClass())) {
-            try {
+        try {
+            if (Object.class.equals(method.getDeclaringClass())) {
                 return method.invoke(this, args);
-            } catch (Throwable t) {
-                throw ExceptionUtil.unwrapThrowable(t);
+            } else {
+                return getOrCreate(method).execute(sqlSessionFactory, args);
             }
+        } catch (Throwable t) {
+            throw ExceptionUtils.unwrapThrowable(t);
         }
-
-        return getOrCreate(method).execute(sqlSessionFactory, args);
     }
 
     private AceMethod getOrCreate(Method method) {

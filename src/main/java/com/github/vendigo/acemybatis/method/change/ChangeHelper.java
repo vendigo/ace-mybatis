@@ -2,6 +2,7 @@ package com.github.vendigo.acemybatis.method.change;
 
 import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.parser.ParamsHolder;
+import com.github.vendigo.acemybatis.proxy.RuntimeExecutionException;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -19,20 +20,24 @@ class ChangeHelper {
         return CompletableFuture.supplyAsync(() -> {
             ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
             List<ParamsHolder> parts = divideOnParts(params, threadCount);
+            int result;
 
-            int result = IntStream.range(0, threadCount)
-                    .mapToObj((n) -> executorService.submit(new ChangeTask(config, changeFunction, sqlSessionFactory, statementName, parts.get(n),
-                            chunkSize)))
-                    .map(ChangeHelper::getFromFuture)
-                    .mapToInt(Integer::valueOf)
-                    .sum();
-            executorService.shutdown();
+            try {
+                result = IntStream.range(0, threadCount)
+                        .mapToObj((n) -> executorService.submit(new ChangeTask(config, changeFunction, sqlSessionFactory, statementName, parts.get(n),
+                                chunkSize)))
+                        .map(ChangeHelper::getFromFuture)
+                        .mapToInt(Integer::valueOf)
+                        .sum();
+            } finally {
+                executorService.shutdown();
+            }
             return result;
         });
     }
 
     static void changeChunk(SqlSessionFactory sqlSessionFactory, List<Object> chunk, String statementName,
-                                   ChangeFunction changeFunction) {
+                            ChangeFunction changeFunction) {
         try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
             for (Object entity : chunk) {
                 changeFunction.apply(sqlSession, statementName, entity);
@@ -64,8 +69,7 @@ class ChangeHelper {
         try {
             return future.get();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeExecutionException(e);
         }
-        return 0;
     }
 }

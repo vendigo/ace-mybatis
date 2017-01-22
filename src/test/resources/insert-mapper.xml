@@ -91,6 +91,40 @@
         )
     </insert>
 
+    <insert id="asyncInsertWithError" parameterType="com.github.vendigo.acemybatis.test.app.User">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY,
+        )
+        VALUES (
+        #{firstName},
+        #{lastName},
+        #{email},
+        #{phoneNumber},
+        #{city}
+        )
+    </insert>
+
+    <insert id="insertWithError" parameterType="com.github.vendigo.acemybatis.test.app.User">
+        INSERT INTO USER (
+        FIRST_NAME,
+        LAST_NAME,
+        EMAIL,
+        PHONE_NUMBER,
+        CITY,
+        )
+        VALUES (
+        #{firstName},
+        #{lastName},
+        #{email},
+        #{phoneNumber},
+        #{city}
+        )
+    </insert>
+
     <insert id="insertCollector" parameterType="com.github.vendigo.acemybatis.test.app.User">
         INSERT INTO USER (
         FIRST_NAME,

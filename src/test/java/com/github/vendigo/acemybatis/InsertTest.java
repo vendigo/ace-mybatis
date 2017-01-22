@@ -2,6 +2,7 @@ package com.github.vendigo.acemybatis;
 
 import com.github.vendigo.acemybatis.test.app.AbstractTest;
 import com.github.vendigo.acemybatis.test.app.User;
+import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -70,6 +72,17 @@ public class InsertTest extends AbstractTest {
         future.get();
         List<User> actualResults = userTestDao.selectAll();
         assertCollections(actualResults, users);
+    }
+
+    @Test(expected = ExecutionException.class)
+    public void asyncInsertWithError() throws Exception {
+        CompletableFuture<Void> future = userMapper.asyncInsertWithError(users);
+        future.get();
+    }
+
+    @Test(expected = PersistenceException.class)
+    public void insertWithError() throws Exception {
+        userMapper.insertWithError(users);
     }
 
     @Test

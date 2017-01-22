@@ -38,6 +38,10 @@ public interface UserMapper {
 
     CompletableFuture<Void> insertAsyncVoid(List<User> users);
 
+    CompletableFuture<Void> asyncInsertWithError(List<User> users);
+
+    void insertWithError(List<User> users);
+
     ChangeCollector<User> insertCollector();
 
     void updateOne(User user);
