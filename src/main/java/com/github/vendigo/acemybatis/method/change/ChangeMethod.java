@@ -33,9 +33,8 @@ public abstract class ChangeMethod implements AceMethod {
         ParamsHolder params = ParamsParser.parseParams(config, methodSignature, args);
         int threadCount = CommonUtils.computeThreadPullSize(config.getThreadCount(), params.getEntities().size(),
                 config.getUpdateChunkSize());
-        return ChangeHelper.applyAsync(config, changeFunction, sqlSessionFactory, statementName, params,
-                config.getUpdateChunkSize(),
-                threadCount);
+        config.setThreadCount(threadCount);
+        return ChangeHelper.applyAsync(config, changeFunction, sqlSessionFactory, statementName, params);
     }
 
 }

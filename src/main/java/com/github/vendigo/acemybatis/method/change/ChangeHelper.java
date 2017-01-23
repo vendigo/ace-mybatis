@@ -16,16 +16,16 @@ import java.util.stream.IntStream;
 
 class ChangeHelper {
     static CompletableFuture<Integer> applyAsync(AceConfig config, ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
-                                                 ParamsHolder params, int chunkSize, int threadCount) {
+                                                 ParamsHolder params) {
         return CompletableFuture.supplyAsync(() -> {
-            ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
-            List<ParamsHolder> parts = divideOnParts(params, threadCount);
+            ExecutorService executorService = Executors.newFixedThreadPool(config.getThreadCount());
+            List<ParamsHolder> parts = divideOnParts(params, config.getThreadCount());
             int result;
 
             try {
-                result = IntStream.range(0, threadCount)
-                        .mapToObj((n) -> executorService.submit(new ChangeTask(config, changeFunction, sqlSessionFactory, statementName, parts.get(n),
-                                chunkSize)))
+                result = IntStream.range(0, config.getThreadCount())
+                        .mapToObj((n) -> executorService.submit(new ChangeTask(config, changeFunction, sqlSessionFactory,
+                                statementName, parts.get(n))))
                         .map(ChangeHelper::getFromFuture)
                         .mapToInt(Integer::valueOf)
                         .sum();

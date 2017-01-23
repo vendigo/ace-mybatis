@@ -20,16 +20,14 @@ public class ChangeTask implements Callable<Integer> {
     private SqlSessionFactory sqlSessionFactory;
     private String statementName;
     private ParamsHolder params;
-    private Integer chunkSize;
 
     public ChangeTask(AceConfig config, ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
-                      ParamsHolder params, Integer chunkSize) {
+                      ParamsHolder params) {
         this.config = config;
         this.changeFunction = changeFunction;
         this.sqlSessionFactory = sqlSessionFactory;
         this.statementName = statementName;
         this.params = params;
-        this.chunkSize = chunkSize;
     }
 
     @Override
@@ -42,7 +40,7 @@ public class ChangeTask implements Callable<Integer> {
             for (Object entity : entities) {
                 changeFunction.apply(sqlSession, statementName, formatParam(entity, otherParams));
                 i++;
-                if (i % chunkSize == 0) {
+                if (i % config.getUpdateChunkSize() == 0) {
                     sqlSession.commit();
                 }
             }
