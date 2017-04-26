@@ -34,12 +34,12 @@ inserting/updating big amount of data.)
 
 When using ace-mybatis all standard mybatis declarations are available as well as additional methods.
 
-* [Stream select/Reactive stream select](#stream-selectreactive-stream-select)
+* [Stream select](#stream-select)
 * [Batch insert/update/delete](#batch-insertupdatedelete)
 * [Async batch insert/update/delete](#async-batch-insertupdatedelete)
 * [Insert/update/delete collector](#insertupdatedelete-collector)
 
-### Stream select/Reactive stream select
+### Stream select
 
 You can get stream directly from mapper.
 
@@ -68,18 +68,7 @@ public interface UserMapper {
 </mapper>
 ```
 
-In this variant all data are obtained at once. If you additionally provide query for count it will select data using row
-bounds and asynchronously populating stream. Count query should have name {selectName}Count.
-
-```xml
-<select id="selectUsersCount" resultType="int">
-        SELECT count(*) FROM USER
-</select>
-```
-
-It make sense only for very big counts,
-you will obtain first portion of data quickly although overall time may increase.
-In real cases plain select is more efficient.
+All data are obtained at once and stream is simply created from result list. 
 
 ### Batch insert/update/delete
 
@@ -294,9 +283,8 @@ public interface ClientMapper {
 
 Behaviour is configurable via additional properties:
 
-* selectChunkSize - chunk size for reactive stream select (The one with count query). 10000 by default.
 * changeChunkSize - chunk size for batch insert/update/delete methods. 2000 by default.
-* threadCount - thread count for batch methods/reactive select.
+* threadCount - thread count for batch methods.
 Computed based on available processors if not specified. Automatic set to 1 for small amount of data.
 * listName - parameter name for batched list ("entities" by default).
 * elementName - parameter name for batched item (entity by default).
@@ -323,7 +311,7 @@ class SpringConfig {
             return AceMapperFactory.<UserMapper>builder()
                     .mapperInterface(UserMapper.class)
                     .sqlSessionFactory(sqlSessionFactory)
-                    .selectChunkSize(20000)
+                    .changeChunkSize(2000)
                     .build();
         }
 
@@ -341,7 +329,7 @@ class SpringConfig {
                     .mapperInterface(UserMapper.class)
                     .sqlSessionFactory(sqlSessionFactory)
                     .config(aceConfig()) //use config bean
-                    .selectChunkSize(20000) //plus additional properties
+                    .elementName("e") //plus additional properties
                     .setChangeChunkSize(1500) //override some values from aceConfig() bean
                     .build();
         }

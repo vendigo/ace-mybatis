@@ -3,6 +3,7 @@ package com.github.vendigo.acemybatis.method.change;
 import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.parser.ParamsHolder;
 import com.github.vendigo.acemybatis.proxy.RuntimeExecutionException;
+import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -38,7 +39,7 @@ class ChangeHelper {
 
     static void changeChunk(SqlSessionFactory sqlSessionFactory, List<Object> chunk, String statementName,
                             ChangeFunction changeFunction) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
             for (Object entity : chunk) {
                 changeFunction.apply(sqlSession, statementName, entity);
             }

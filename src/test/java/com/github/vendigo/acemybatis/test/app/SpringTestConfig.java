@@ -36,7 +36,6 @@ public class SpringTestConfig {
     public AceMapperScannerConfigurer mapperScannerConfigurer() {
         return AceMapperScannerConfigurer.builder()
                 .basePackage("com.github.vendigo.acemybatis.test.app")
-                .selectChunkSize(2000)
                 .updateChunkSize(1000)
                 .listName("list")
                 .elementName("e")

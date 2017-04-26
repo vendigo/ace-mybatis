@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 /**
- * Simple select method which returns stream. Not lazy - loads all data in one query. Used if count query not defined.
+ * Simple select method which returns stream. Not lazy - loads all data in one query.
  */
 public class SimpleStreamSelect implements AceMethod {
     private final Method method;

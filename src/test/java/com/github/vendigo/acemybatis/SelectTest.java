@@ -42,12 +42,6 @@ public class SelectTest extends AbstractTest {
     }
 
     @Test
-    public void selectReactiveStream() throws Exception {
-        List<User> actualUsers = userMapper.selectReactiveStream().collect(Collectors.toList());
-        assertCollections(actualUsers, users);
-    }
-
-    @Test
     public void selectSimpleStreamWithParams() throws Exception {
         List<User> actualUsers = userMapper.selectSimpleStreamWithParams("Konotop", "Ostin").collect(Collectors.toList());
         assertCollections(actualUsers, asList(petya, boris, eric));

@@ -6,16 +6,16 @@ import static com.github.vendigo.acemybatis.utils.Validator.isPositive;
 /**
  * Config for AceMappers.
  * <ul>
- *     <li>selectChunkSize - chunk size for batch select (The one with count query).</li>
+ *     <li>selectChunkSize - will be used for batch select.</li>
  *     <li>updateChunkSize - chunk size for batch insert/update/delete (Methods which returns CompletableFuture).</li>
- *     <li>threadCount - count of threads for batch select/insert/update/delete. If 0 - computed bases on available cores.</li>
+ *     <li>threadCount - count of threads for batch insert/update/delete. If 0 - computed bases on available cores.</li>
  * </ul>
  */
 public class AceConfig {
-    public static final int DEFAULT_SELECT_CHUNK_SIZE = 10_000;
-    public static final int DEFAULT_CHANGE_CHUNK_SIZE = 2_000;
-    public static final String DEFAULT_LIST_NAME = "entities";
-    public static final String DEFAULT_ELEMENT_NAME = "entity";
+    private static final int DEFAULT_SELECT_CHUNK_SIZE = 10_000;
+    private static final int DEFAULT_CHANGE_CHUNK_SIZE = 2_000;
+    private static final String DEFAULT_LIST_NAME = "entities";
+    private static final String DEFAULT_ELEMENT_NAME = "entity";
 
     private int selectChunkSize = DEFAULT_SELECT_CHUNK_SIZE;
     private int updateChunkSize = DEFAULT_CHANGE_CHUNK_SIZE;

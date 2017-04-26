@@ -7,10 +7,6 @@ public class CommonUtils {
         return method.getDeclaringClass().getName() + "." + method.getName();
     }
 
-    public static String getCountStatementName(Method method) {
-        return getStatementName(method)+"Count";
-    }
-
     public static int computeThreadPullSize(int declaredValue, int entriesCount, int chunkSize) {
         if (declaredValue > 0 ) {
             return declaredValue;

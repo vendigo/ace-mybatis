@@ -27,21 +27,6 @@
         SELECT count(*) FROM USER
     </select>
 
-    <select id="selectReactiveStreamCount" resultType="int">
-        SELECT count(*) FROM USER
-    </select>
-
-    <select id="selectReactiveStream" resultType="com.github.vendigo.acemybatis.test.app.User">
-        SELECT
-        FIRST_NAME as firstName,
-        LAST_NAME as lastName,
-        EMAIL as email,
-        PHONE_NUMBER as phoneNumber,
-        CITY as city
-        FROM USER
-        ORDER BY EMAIL
-    </select>
-
     <select id="selectSimpleStreamWithParams" resultType="com.github.vendigo.acemybatis.test.app.User">
         SELECT
         FIRST_NAME as firstName,

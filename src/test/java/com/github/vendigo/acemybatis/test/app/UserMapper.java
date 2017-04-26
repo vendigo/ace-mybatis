@@ -18,8 +18,6 @@ public interface UserMapper {
 
     List<Map<String, Object>> selectMap();
 
-    Stream<User> selectReactiveStream();
-
     Stream<User> selectSimpleStreamWithParams(@Param("excludeCity") String excludeCity,
                                               @Param("excludeName") String excludeName);
 
