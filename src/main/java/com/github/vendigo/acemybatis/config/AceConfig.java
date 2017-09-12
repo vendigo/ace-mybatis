@@ -12,12 +12,10 @@ import static com.github.vendigo.acemybatis.utils.Validator.isPositive;
  * </ul>
  */
 public class AceConfig {
-    private static final int DEFAULT_SELECT_CHUNK_SIZE = 10_000;
     private static final int DEFAULT_CHANGE_CHUNK_SIZE = 2_000;
     private static final String DEFAULT_LIST_NAME = "entities";
     private static final String DEFAULT_ELEMENT_NAME = "entity";
 
-    private int selectChunkSize = DEFAULT_SELECT_CHUNK_SIZE;
     private int updateChunkSize = DEFAULT_CHANGE_CHUNK_SIZE;
     private String listName = DEFAULT_LIST_NAME;
     private String elementName = DEFAULT_ELEMENT_NAME;
@@ -26,18 +24,9 @@ public class AceConfig {
     AceConfig() {
     }
 
-    public AceConfig(int selectChunkSize, int updateChunkSize, int threadCount) {
-        this.selectChunkSize = isPositive(selectChunkSize);
+    public AceConfig(int updateChunkSize, int threadCount) {
         this.updateChunkSize = isPositive(updateChunkSize);
         this.threadCount = threadCount;
-    }
-
-    public int getSelectChunkSize() {
-        return selectChunkSize;
-    }
-
-    public void setSelectChunkSize(int selectChunkSize) {
-        this.selectChunkSize = selectChunkSize;
     }
 
     public int getUpdateChunkSize() {

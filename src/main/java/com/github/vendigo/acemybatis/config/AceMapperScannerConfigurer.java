@@ -101,7 +101,7 @@ public class AceMapperScannerConfigurer implements BeanDefinitionRegistryPostPro
 
         public AceMapperScannerConfigurer build() {
             return new AceMapperScannerConfigurer(basePackage, AceConfigResolver.resolveConfig(config,
-                    selectChunkSize, updateChunkSize, threadCount, listName, elementName));
+                    updateChunkSize, threadCount, listName, elementName));
         }
     }
 }

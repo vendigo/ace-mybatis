@@ -8,9 +8,8 @@ import java.util.List;
 
 @Component
 public class UserTestDao {
-
     @Autowired
-    JdbcTemplate jdbcTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     public void deleteAll() {
         jdbcTemplate.execute("DELETE FROM USER");

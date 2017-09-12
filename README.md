@@ -68,7 +68,7 @@ public interface UserMapper {
 </mapper>
 ```
 
-All data are obtained at once and stream is simply created from result list. 
+All data are obtained at once and stream is simply created from the result list. 
 
 ### Batch insert/update/delete
 
@@ -246,7 +246,7 @@ public UserMapper userMapper(SqlSessionFactory sqlSessionFactory) {
 }
 ```
 
-### Auto discovering annotated interfaces
+### Auto discovering of annotated interfaces
 
 ```java
 @AceMapper
@@ -265,7 +265,7 @@ class SpringConfig {
 }
 ```
 
-When using more than one sqlSessionFactory, bean name should be specified in AceMapper annotation.
+When using more than one sqlSessionFactory, bean name should be specified in the AceMapper annotation.
 
 ```java
 @AceMapper(sqlSessionFactoryBeanName = "firstSqlSessionFactory")

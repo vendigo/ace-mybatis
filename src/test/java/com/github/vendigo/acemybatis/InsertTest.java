@@ -1,6 +1,5 @@
 package com.github.vendigo.acemybatis;
 
-import com.github.vendigo.acemybatis.test.app.AbstractTest;
 import com.github.vendigo.acemybatis.test.app.User;
 import org.apache.ibatis.exceptions.PersistenceException;
 import org.junit.Before;

@@ -12,8 +12,6 @@ import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -32,8 +30,7 @@ import java.util.stream.Stream;
  * </ul>
  */
 public class DeclarationParser {
-    private static final Logger log = LoggerFactory.getLogger(DeclarationParser.class);
-    public static final EnumSet<SqlCommandType> CHANGE_COMMANDS = EnumSet.of(SqlCommandType.INSERT, SqlCommandType.UPDATE,
+    private static final EnumSet<SqlCommandType> CHANGE_COMMANDS = EnumSet.of(SqlCommandType.INSERT, SqlCommandType.UPDATE,
             SqlCommandType.DELETE);
 
     public static AceMethod parseMethodDeclaration(AceConfig aceConfig, Class<?> mapperInterface,
@@ -80,13 +77,10 @@ public class DeclarationParser {
     private static Optional<AceMethod> parseChange(MapperMethod.MethodSignature methodSignature,
                                                    Method method, AceConfig aceConfig, SqlCommandType commandType) {
         if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
-            log.info("Using async version for {}", method.getName());
             return Optional.of(new AsyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         } else if (isSyncChangeMethod(aceConfig, method)) {
-            log.info("Using sync version for {}", method.getName());
             return Optional.of(new SyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         }
-        log.info("Delegate to standard myBatis implementation");
         return Optional.empty();
     }
 

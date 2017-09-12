@@ -86,7 +86,7 @@ public class AceMapperFactory<T> {
 
         public T build() {
             return new AceMapperFactory<>(mapperInterface, sqlSessionFactory, resolveConfig(config,
-                    selectChunkSize, updateChunkSize, threadCount, listName, elementName)).create();
+                    updateChunkSize, threadCount, listName, elementName)).create();
         }
     }
 }

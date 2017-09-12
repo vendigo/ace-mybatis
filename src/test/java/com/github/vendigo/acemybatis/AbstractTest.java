@@ -1,5 +1,9 @@
-package com.github.vendigo.acemybatis.test.app;
+package com.github.vendigo.acemybatis;
 
+import com.github.vendigo.acemybatis.test.app.SpringTestConfig;
+import com.github.vendigo.acemybatis.test.app.User;
+import com.github.vendigo.acemybatis.test.app.UserMapper;
+import com.github.vendigo.acemybatis.test.app.UserTestDao;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,20 +21,20 @@ import static org.hamcrest.Matchers.hasSize;
 @ContextConfiguration(classes = {SpringTestConfig.class})
 public abstract class AbstractTest {
 
-    protected User petya = new User("Petya", "Pomagay", "illhelpyou@gmail.com", "25315", "Nizhyn");
-    protected User boris = new User("Boris", "Britva", "boris50@gmail.com", "344", "London");
-    protected User eric = new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park");
-    protected User galya = new User("Galya", "Ivanova", "galya_ivanova@gmail.com", "54915", "Konotop");
-    protected User ostin = new User("Ostin", "Lyapunov", "ostin_lyapota@in.ua", "54915", "Brovary");
-    protected final List<User> users = Arrays.asList(petya, boris, eric, galya, ostin);
+    User petya = new User("Petya", "Pomagay", "illhelpyou@gmail.com", "25315", "Nizhyn");
+    User boris = new User("Boris", "Britva", "boris50@gmail.com", "344", "London");
+    User eric = new User("Eric", "Cartman", "eric2006@gmail.com", "25315", "South Park");
+    User galya = new User("Galya", "Ivanova", "galya_ivanova@gmail.com", "54915", "Konotop");
+    User ostin = new User("Ostin", "Lyapunov", "ostin_lyapota@in.ua", "54915", "Brovary");
+    final List<User> users = Arrays.asList(petya, boris, eric, galya, ostin);
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
-    protected UserMapper userMapper;
+    UserMapper userMapper;
     @Autowired
-    protected UserTestDao userTestDao;
+    UserTestDao userTestDao;
 
-    protected void reInsertAllGuys() throws Exception {
+    void reInsertAllGuys() throws Exception {
         userTestDao.deleteAll();
         userTestDao.insert(petya);
         userTestDao.insert(boris);
