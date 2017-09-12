@@ -216,14 +216,14 @@ public class BusinessLogic {
 <dependency>
  <groupId>com.github.vendigo</groupId>
  <artifactId>ace-mybatis</artifactId>
- <version>0.0.5</version>
+ <version>0.9.0</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-compile group: 'com.github.vendigo', name: 'ace-mybatis', version: '0.0.5'
+compile group: 'com.github.vendigo', name: 'ace-mybatis', version: '0.9.0'
 ```
 
 ## Configuration
