@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import static com.github.vendigo.acemybatis.method.change.ChangeHelper.AUTO_COMMIT_FALSE;
+
 /**
  * Task for inserting/updating/deleting bunch of entities in chunks.
  */
@@ -21,8 +23,8 @@ public class ChangeTask implements Callable<Integer> {
     private String statementName;
     private ParamsHolder params;
 
-    public ChangeTask(AceConfig config, ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
-                      ParamsHolder params) {
+    ChangeTask(AceConfig config, ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
+               ParamsHolder params) {
         this.config = config;
         this.changeFunction = changeFunction;
         this.sqlSessionFactory = sqlSessionFactory;
@@ -36,7 +38,7 @@ public class ChangeTask implements Callable<Integer> {
         List<Object> entities = params.getEntities();
         Map<String, Object> otherParams = params.getOtherParams();
 
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, AUTO_COMMIT_FALSE)) {
             for (Object entity : entities) {
                 changeFunction.apply(sqlSession, statementName, formatParam(entity, otherParams));
                 i++;
@@ -44,7 +46,9 @@ public class ChangeTask implements Callable<Integer> {
                     sqlSession.commit();
                 }
             }
-            sqlSession.commit();
+            if (i % config.getUpdateChunkSize() != 0) {
+                sqlSession.commit();
+            }
         }
         //In batch mode sqlSession returns incorrect number of affected rows. We presume that one call changes one row.
         return i;

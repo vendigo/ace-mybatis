@@ -16,7 +16,10 @@ import java.util.concurrent.Future;
 import java.util.stream.IntStream;
 
 class ChangeHelper {
-    static CompletableFuture<Integer> applyAsync(AceConfig config, ChangeFunction changeFunction, SqlSessionFactory sqlSessionFactory, String statementName,
+    static final boolean AUTO_COMMIT_FALSE = false;
+
+    static CompletableFuture<Integer> applyAsync(AceConfig config, ChangeFunction changeFunction,
+                                                 SqlSessionFactory sqlSessionFactory, String statementName,
                                                  ParamsHolder params) {
         return CompletableFuture.supplyAsync(() -> {
             ExecutorService executorService = Executors.newFixedThreadPool(config.getThreadCount());
@@ -39,7 +42,7 @@ class ChangeHelper {
 
     static void changeChunk(SqlSessionFactory sqlSessionFactory, List<Object> chunk, String statementName,
                             ChangeFunction changeFunction) {
-        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false)) {
+        try (SqlSession sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, AUTO_COMMIT_FALSE)) {
             for (Object entity : chunk) {
                 changeFunction.apply(sqlSession, statementName, entity);
             }
@@ -66,7 +69,7 @@ class ChangeHelper {
         return parts;
     }
 
-    static Integer getFromFuture(Future<Integer> future) {
+    private static Integer getFromFuture(Future<Integer> future) {
         try {
             return future.get();
         } catch (Exception e) {
