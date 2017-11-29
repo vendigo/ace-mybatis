@@ -60,7 +60,7 @@ public class ChangeHelperTest {
         ParamsHolder paramsHolder = createParamsHolder(numberOfElements);
         when(sqlSessionFactory.openSession(ExecutorType.BATCH, false)).thenReturn(sqlSession);
 
-        ChangeHelper.apply(aceConfig, (sqlSession, statementName, entity) -> {}, sqlSessionFactory,
+        ChangeHelper.applyInParallel(aceConfig, (sqlSession, statementName, entity) -> {}, sqlSessionFactory,
                 "insert", paramsHolder);
         verify(sqlSession, times(expectedCommits)).commit();
     }

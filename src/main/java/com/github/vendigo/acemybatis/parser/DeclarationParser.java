@@ -1,9 +1,9 @@
 package com.github.vendigo.acemybatis.parser;
 
 import com.github.vendigo.acemybatis.config.AceConfig;
+import com.github.vendigo.acemybatis.config.Async;
 import com.github.vendigo.acemybatis.config.NonBatchMethod;
 import com.github.vendigo.acemybatis.method.AceMethod;
-import com.github.vendigo.acemybatis.method.CommonUtils;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
 import com.github.vendigo.acemybatis.method.change.ChangeCollector;
 import com.github.vendigo.acemybatis.method.change.ChangeFunction;
@@ -13,6 +13,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Method;
@@ -38,7 +39,7 @@ public class DeclarationParser {
         MapperMethod mapperMethod = new MapperMethod(mapperInterface, method, config);
         MapperMethod.SqlCommand command = new MapperMethod.SqlCommand(config, mapperInterface, method);
         MapperMethod.MethodSignature methodSignature = new MapperMethod.MethodSignature(config, mapperInterface, method);
-        String statementName = CommonUtils.getStatementName(mapperInterface, method);
+        String statementName = mapperInterface.getName() + "." + method.getName();
         Optional<AceMethod> parsedMethod = Optional.empty();
 
         if (CHANGE_COMMANDS.contains(command.getType()) && methodSignature.getReturnType().equals(ChangeCollector.class)) {
@@ -55,11 +56,11 @@ public class DeclarationParser {
     private static ChangeFunction resolveChangeFunction(SqlCommandType type) {
         switch (type) {
             case INSERT:
-                return (sqlSession, statement, parameter) -> sqlSession.insert(statement, parameter);
+                return SqlSession::insert;
             case UPDATE:
-                return (sqlSession, statement, parameter) -> sqlSession.update(statement, parameter);
+                return SqlSession::update;
             case DELETE:
-                return (sqlSession, statement, parameter) -> sqlSession.delete(statement, parameter);
+                return SqlSession::delete;
         }
 
         throw new IllegalArgumentException(type + " is not supported for change collector");
@@ -69,7 +70,8 @@ public class DeclarationParser {
                                                    Method method, String statementName, AceConfig aceConfig,
                                                    SqlCommandType commandType) {
         if (isSyncChangeMethod(aceConfig, method)) {
-            return Optional.of(new ChangeMethod(statementName, methodSignature, aceConfig, resolveChangeFunction(commandType)));
+            boolean async = method.isAnnotationPresent(Async.class);
+            return Optional.of(new ChangeMethod(statementName, async, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         }
         return Optional.empty();
     }

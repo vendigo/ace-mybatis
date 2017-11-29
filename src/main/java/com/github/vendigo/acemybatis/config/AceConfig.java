@@ -19,7 +19,7 @@ public class AceConfig {
     private int updateChunkSize = DEFAULT_CHANGE_CHUNK_SIZE;
     private String listName = DEFAULT_LIST_NAME;
     private String elementName = DEFAULT_ELEMENT_NAME;
-    private int threadCount = 0;
+    private int threadCount = Runtime.getRuntime().availableProcessors();
 
     AceConfig() {
     }
