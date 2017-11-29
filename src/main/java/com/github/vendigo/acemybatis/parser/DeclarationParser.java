@@ -5,17 +5,18 @@ import com.github.vendigo.acemybatis.config.NonBatchMethod;
 import com.github.vendigo.acemybatis.method.AceMethod;
 import com.github.vendigo.acemybatis.method.CommonUtils;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
-import com.github.vendigo.acemybatis.method.change.*;
+import com.github.vendigo.acemybatis.method.change.ChangeCollector;
+import com.github.vendigo.acemybatis.method.change.ChangeFunction;
+import com.github.vendigo.acemybatis.method.change.ChangeMethod;
+import com.github.vendigo.acemybatis.method.change.CollectorMethod;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 /**
@@ -23,8 +24,7 @@ import java.util.stream.Stream;
  * Rules
  * <ul>
  * <li>Return type ChangeCollector - {@link CollectorMethod}</li>
- * <li>Insert/Update/Delete with return type Completable future - {@link AsyncChangeMethod}</li>
- * <li>Insert/Update/Delete with return type int - {@link SyncChangeMethod}</li>
+ * <li>Insert/Update/Delete with return type int/void - {@link ChangeMethod}</li>
  * <li>Otherwise - {@link DelegateMethodImpl}</li>
  * </ul>
  */
@@ -55,11 +55,11 @@ public class DeclarationParser {
     private static ChangeFunction resolveChangeFunction(SqlCommandType type) {
         switch (type) {
             case INSERT:
-                return SqlSession::insert;
+                return (sqlSession, statement, parameter) -> sqlSession.insert(statement, parameter);
             case UPDATE:
-                return SqlSession::update;
+                return (sqlSession, statement, parameter) -> sqlSession.update(statement, parameter);
             case DELETE:
-                return SqlSession::delete;
+                return (sqlSession, statement, parameter) -> sqlSession.delete(statement, parameter);
         }
 
         throw new IllegalArgumentException(type + " is not supported for change collector");
@@ -68,10 +68,8 @@ public class DeclarationParser {
     private static Optional<AceMethod> parseChange(MapperMethod.MethodSignature methodSignature,
                                                    Method method, String statementName, AceConfig aceConfig,
                                                    SqlCommandType commandType) {
-        if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
-            return Optional.of(new AsyncChangeMethod(statementName, methodSignature, aceConfig, resolveChangeFunction(commandType)));
-        } else if (isSyncChangeMethod(aceConfig, method)) {
-            return Optional.of(new SyncChangeMethod(statementName, methodSignature, aceConfig, resolveChangeFunction(commandType)));
+        if (isSyncChangeMethod(aceConfig, method)) {
+            return Optional.of(new ChangeMethod(statementName, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         }
         return Optional.empty();
     }

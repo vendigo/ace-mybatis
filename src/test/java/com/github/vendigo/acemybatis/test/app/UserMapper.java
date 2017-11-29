@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 
 @AceMapper
 public interface UserMapper {
@@ -26,12 +25,6 @@ public interface UserMapper {
 
     void insertWithAdditionalParameters(@Param("list")List<User> users, @Param("customCity")String customCity);
 
-    CompletableFuture<Integer> insertAsync(List<User> users);
-
-    CompletableFuture<Void> insertAsyncVoid(List<User> users);
-
-    CompletableFuture<Void> asyncInsertWithError(List<User> users);
-
     void insertWithError(List<User> users);
 
     ChangeCollector<User> insertCollector();
@@ -42,8 +35,6 @@ public interface UserMapper {
 
     int updateSync(List<User> users);
 
-    CompletableFuture<Integer> updateAsync(List<User> users);
-
     ChangeCollector<User> updateCollector();
 
     int deleteAll();
@@ -51,8 +42,6 @@ public interface UserMapper {
     int deleteByEmail(String email);
 
     int syncDelete(List<User> users);
-
-    CompletableFuture<Integer> asyncDelete(List<User> users);
 
     ChangeCollector<User> deleteCollector();
 }

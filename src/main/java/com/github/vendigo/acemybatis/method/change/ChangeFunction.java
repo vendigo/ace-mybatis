@@ -7,5 +7,5 @@ import org.apache.ibatis.session.SqlSession;
  */
 @FunctionalInterface
 public interface ChangeFunction {
-    int apply(SqlSession sqlSession, String statementName, Object entity);
+    void apply(SqlSession sqlSession, String statementName, Object entity);
 }

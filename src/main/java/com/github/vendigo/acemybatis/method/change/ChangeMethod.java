@@ -8,14 +8,12 @@ import com.github.vendigo.acemybatis.parser.ParamsParser;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.util.concurrent.CompletableFuture;
-
 import static com.github.vendigo.acemybatis.utils.Validator.notNull;
 
 /**
- * Generic implementation for change methods (insert/update/delete).
+ * Implementation for change methods (insert/update/delete).
  */
-public abstract class ChangeMethod implements AceMethod {
+public class ChangeMethod implements AceMethod {
     private final MapperMethod.MethodSignature methodSignature;
     private final AceConfig config;
     private final String statementName;
@@ -29,13 +27,13 @@ public abstract class ChangeMethod implements AceMethod {
         this.changeFunction = notNull(changeFunction);
     }
 
-    @SuppressWarnings("unchecked")
-    protected CompletableFuture<Integer> doExecute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
+    @Override
+    public Integer execute(SqlSessionFactory sqlSessionFactory, Object[] args) throws Exception {
         ParamsHolder params = ParamsParser.parseParams(config, methodSignature, args);
         int threadCount = CommonUtils.computeThreadPullSize(config.getThreadCount(), params.getEntities().size(),
                 config.getUpdateChunkSize());
         config.setThreadCount(threadCount);
-        return ChangeHelper.applyAsync(config, changeFunction, sqlSessionFactory, statementName, params);
+        return ChangeHelper.apply(config, changeFunction, sqlSessionFactory, statementName, params);
     }
 
 }

@@ -11,7 +11,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.github.vendigo.acemybatis.method.change.TestUtils.createParamsHolder;
 import static java.util.Arrays.asList;
@@ -38,28 +40,28 @@ public class ChangeHelperTest {
 
     @Test
     public void do4CommitsWhen10By3In2Threads() throws Exception {
-        testApplyAsync(4, 10, 3, 2);
+        testApply(4, 10, 3, 2);
     }
 
     @Test
     public void do3CommitWhen50By100In3Threads() throws Exception {
         //Fix to 1
-        testApplyAsync(3, 50, 100, 3);
+        testApply(3, 50, 100, 3);
     }
 
     @Test
     public void do12CommitsWhen1000By100In4Threads() throws Exception {
         //Fix to 10
-        testApplyAsync(12, 1000, 100, 4);
+        testApply(12, 1000, 100, 4);
     }
 
-    private void testApplyAsync(int expectedCommits, int numberOfElements, int chunkSize, int threadCount) throws Exception {
+    private void testApply(int expectedCommits, int numberOfElements, int chunkSize, int threadCount) throws Exception {
         AceConfig aceConfig = new AceConfig(chunkSize, threadCount);
         ParamsHolder paramsHolder = createParamsHolder(numberOfElements);
         when(sqlSessionFactory.openSession(ExecutorType.BATCH, false)).thenReturn(sqlSession);
 
-        ChangeHelper.applyAsync(aceConfig, (sqlSession, statementName, entity) -> 0, sqlSessionFactory,
-                "insert", paramsHolder).get();
+        ChangeHelper.apply(aceConfig, (sqlSession, statementName, entity) -> {}, sqlSessionFactory,
+                "insert", paramsHolder);
         verify(sqlSession, times(expectedCommits)).commit();
     }
 

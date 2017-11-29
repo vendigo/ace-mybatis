@@ -39,7 +39,7 @@ public class ChangeTaskTest {
         AceConfig aceConfig = new AceConfig(chunkSize, 2);
 
         ParamsHolder paramsHolder = createParamsHolder(numberOfElements);
-        ChangeTask changeTask = new ChangeTask(aceConfig, (sqlSession, statementName, entity) -> 0, sqlSessionFactory,
+        ChangeTask changeTask = new ChangeTask(aceConfig, (sqlSession, statementName, entity) -> {}, sqlSessionFactory,
                 "insert", paramsHolder);
         when(sqlSessionFactory.openSession(ExecutorType.BATCH, false)).thenReturn(sqlSession);
         changeTask.call();

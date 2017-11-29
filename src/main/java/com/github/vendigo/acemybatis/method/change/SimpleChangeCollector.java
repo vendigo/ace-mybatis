@@ -1,6 +1,8 @@
 package com.github.vendigo.acemybatis.method.change;
 
 import com.github.vendigo.acemybatis.config.AceConfig;
+import org.apache.ibatis.session.ExecutorType;
+import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.Collections;
@@ -20,21 +22,21 @@ import java.util.function.Supplier;
 class SimpleChangeCollector<T> implements ChangeCollector<T> {
 
     private final AceConfig config;
-    private final SqlSessionFactory sqlSessionFactory;
     private final String statementName;
     private final ChangeFunction changeFunction;
+    private final SqlSession sqlSession;
 
     SimpleChangeCollector(AceConfig config, SqlSessionFactory sqlSessionFactory, String statementName,
                           ChangeFunction changeFunction) {
         this.config = config;
-        this.sqlSessionFactory = sqlSessionFactory;
+        this.sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH, false);
         this.statementName = statementName;
         this.changeFunction = changeFunction;
     }
 
     @Override
     public Supplier<CollectorContainer> supplier() {
-        return () -> new CollectorContainer(config, sqlSessionFactory, statementName, changeFunction);
+        return () -> new CollectorContainer(config, sqlSession, statementName, changeFunction);
     }
 
     @Override

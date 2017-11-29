@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,23 +40,5 @@ public class DeleteTest extends AbstractTest {
         assertThat(rowCount, equalTo(2));
         List<User> actualResults = userTestDao.selectAll();
         assertCollections(actualResults, asList(eric, boris, ostin));
-    }
-
-    @Test
-    public void asyncDelete() throws Exception {
-        int rowCount = userMapper.asyncDelete(asList(petya, galya)).get();
-        assertThat(rowCount, equalTo(2));
-        List<User> actualResults = userTestDao.selectAll();
-        assertCollections(actualResults, asList(eric, boris, ostin));
-    }
-
-    @Test
-    public void deleteCollector() throws Exception {
-        int rowCount = userMapper.asyncDelete(asList(petya, galya)).get();
-        List<User> collected = Stream.of(petya, galya).collect(userMapper.deleteCollector());
-        assertThat(rowCount, equalTo(2));
-        List<User> actualResults = userTestDao.selectAll();
-        assertCollections(actualResults, asList(eric, boris, ostin));
-        assertCollections(collected, asList(petya, galya));
     }
 }
