@@ -4,16 +4,14 @@ import com.github.vendigo.acemybatis.config.AceConfig;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.lang.reflect.Method;
-
 /**
  * Generic method for sync batch insert/update/delete.
  */
 public class SyncChangeMethod extends ChangeMethod {
 
-    public SyncChangeMethod(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config,
+    public SyncChangeMethod(String statementName, MapperMethod.MethodSignature methodSignature, AceConfig config,
                             ChangeFunction changeFunction) {
-        super(method, methodSignature, config, changeFunction);
+        super(statementName, methodSignature, config, changeFunction);
     }
 
     @SuppressWarnings("unchecked")

@@ -7,7 +7,6 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -38,18 +37,6 @@ public class SelectTest extends AbstractTest {
     public void selectOne() throws Exception {
         int count = userMapper.count();
         assertThat(count, equalTo(5));
-    }
-
-    @Test
-    public void selectSimpleStreamWithParams() throws Exception {
-        List<User> actualUsers = userMapper.selectSimpleStreamWithParams("Konotop", "Ostin").collect(Collectors.toList());
-        assertCollections(actualUsers, asList(petya, boris, eric));
-    }
-
-    @Test
-    public void selectSimpleStream() throws Exception {
-        List<User> actualUsers = userMapper.selectSimpleStream().collect(Collectors.toList());
-        assertCollections(actualUsers, users);
     }
 
     private Map<String, Object> userToMap(User user) {

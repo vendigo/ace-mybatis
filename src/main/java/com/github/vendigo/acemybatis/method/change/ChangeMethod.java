@@ -8,24 +8,25 @@ import com.github.vendigo.acemybatis.parser.ParamsParser;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.lang.reflect.Method;
 import java.util.concurrent.CompletableFuture;
+
+import static com.github.vendigo.acemybatis.utils.Validator.notNull;
 
 /**
  * Generic implementation for change methods (insert/update/delete).
  */
 public abstract class ChangeMethod implements AceMethod {
-    private MapperMethod.MethodSignature methodSignature;
-    private AceConfig config;
-    private String statementName;
-    private ChangeFunction changeFunction;
+    private final MapperMethod.MethodSignature methodSignature;
+    private final AceConfig config;
+    private final String statementName;
+    private final ChangeFunction changeFunction;
 
-    public ChangeMethod(Method method, MapperMethod.MethodSignature methodSignature, AceConfig config,
+    public ChangeMethod(String statementName, MapperMethod.MethodSignature methodSignature, AceConfig config,
                         ChangeFunction changeFunction) {
-        this.methodSignature = methodSignature;
-        this.statementName = CommonUtils.getStatementName(method);
-        this.config = config;
-        this.changeFunction = changeFunction;
+        this.methodSignature = notNull(methodSignature);
+        this.statementName = notNull(statementName);
+        this.config = notNull(config);
+        this.changeFunction = notNull(changeFunction);
     }
 
     @SuppressWarnings("unchecked")

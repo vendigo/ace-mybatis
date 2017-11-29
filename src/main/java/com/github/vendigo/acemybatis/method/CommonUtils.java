@@ -3,8 +3,12 @@ package com.github.vendigo.acemybatis.method;
 import java.lang.reflect.Method;
 
 public class CommonUtils {
-    public static String getStatementName(Method method) {
-        return method.getDeclaringClass().getName() + "." + method.getName();
+    /**
+     * Interface class is passed explicitly instead of method.getDeclaringClass
+     * to allow inheritance in mapper interfaces.
+     */
+    public static String getStatementName(Class interfaceClass, Method method) {
+        return interfaceClass.getName() + "." + method.getName();
     }
 
     public static int computeThreadPullSize(int declaredValue, int entriesCount, int chunkSize) {

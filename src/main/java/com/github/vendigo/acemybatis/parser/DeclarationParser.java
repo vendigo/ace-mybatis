@@ -3,9 +3,9 @@ package com.github.vendigo.acemybatis.parser;
 import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.config.NonBatchMethod;
 import com.github.vendigo.acemybatis.method.AceMethod;
+import com.github.vendigo.acemybatis.method.CommonUtils;
 import com.github.vendigo.acemybatis.method.DelegateMethodImpl;
 import com.github.vendigo.acemybatis.method.change.*;
-import com.github.vendigo.acemybatis.method.select.SimpleStreamSelect;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.mapping.SqlCommandType;
@@ -23,7 +23,6 @@ import java.util.stream.Stream;
  * Rules
  * <ul>
  * <li>Return type ChangeCollector - {@link CollectorMethod}</li>
- * <li>Select statement with return type {@link Stream} - {@link SimpleStreamSelect}</li>
  * <li>Insert/Update/Delete with return type Completable future - {@link AsyncChangeMethod}</li>
  * <li>Insert/Update/Delete with return type int - {@link SyncChangeMethod}</li>
  * <li>Otherwise - {@link DelegateMethodImpl}</li>
@@ -39,16 +38,15 @@ public class DeclarationParser {
         MapperMethod mapperMethod = new MapperMethod(mapperInterface, method, config);
         MapperMethod.SqlCommand command = new MapperMethod.SqlCommand(config, mapperInterface, method);
         MapperMethod.MethodSignature methodSignature = new MapperMethod.MethodSignature(config, mapperInterface, method);
+        String statementName = CommonUtils.getStatementName(mapperInterface, method);
         Optional<AceMethod> parsedMethod = Optional.empty();
 
         if (CHANGE_COMMANDS.contains(command.getType()) && methodSignature.getReturnType().equals(ChangeCollector.class)) {
-            return new CollectorMethod(resolveChangeFunction(command.getType()), method, aceConfig);
+            return new CollectorMethod(resolveChangeFunction(command.getType()), statementName, aceConfig);
         }
 
-        if (command.getType() == SqlCommandType.SELECT) {
-            parsedMethod = parseSelect(methodSignature, method);
-        } else if (CHANGE_COMMANDS.contains(command.getType())) {
-            parsedMethod = parseChange(methodSignature, method, aceConfig, command.getType());
+        if (CHANGE_COMMANDS.contains(command.getType())) {
+            parsedMethod = parseChange(methodSignature, method, statementName, aceConfig, command.getType());
         }
 
         return parsedMethod.orElse(new DelegateMethodImpl(mapperMethod));
@@ -67,19 +65,13 @@ public class DeclarationParser {
         throw new IllegalArgumentException(type + " is not supported for change collector");
     }
 
-    private static Optional<AceMethod> parseSelect(MapperMethod.MethodSignature methodSignature, Method method) {
-        if (methodSignature.getReturnType().equals(Stream.class)) {
-            return Optional.of(new SimpleStreamSelect(method, methodSignature));
-        }
-        return Optional.empty();
-    }
-
     private static Optional<AceMethod> parseChange(MapperMethod.MethodSignature methodSignature,
-                                                   Method method, AceConfig aceConfig, SqlCommandType commandType) {
+                                                   Method method, String statementName, AceConfig aceConfig,
+                                                   SqlCommandType commandType) {
         if (methodSignature.getReturnType().equals(CompletableFuture.class)) {
-            return Optional.of(new AsyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
+            return Optional.of(new AsyncChangeMethod(statementName, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         } else if (isSyncChangeMethod(aceConfig, method)) {
-            return Optional.of(new SyncChangeMethod(method, methodSignature, aceConfig, resolveChangeFunction(commandType)));
+            return Optional.of(new SyncChangeMethod(statementName, methodSignature, aceConfig, resolveChangeFunction(commandType)));
         }
         return Optional.empty();
     }

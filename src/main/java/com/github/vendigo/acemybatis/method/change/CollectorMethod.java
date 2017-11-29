@@ -2,20 +2,19 @@ package com.github.vendigo.acemybatis.method.change;
 
 import com.github.vendigo.acemybatis.config.AceConfig;
 import com.github.vendigo.acemybatis.method.AceMethod;
-import com.github.vendigo.acemybatis.method.CommonUtils;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.lang.reflect.Method;
+import static com.github.vendigo.acemybatis.utils.Validator.notNull;
 
 public class CollectorMethod implements AceMethod {
-    private ChangeFunction changeFunction;
-    private AceConfig config;
-    private String statementName;
+    private final ChangeFunction changeFunction;
+    private final AceConfig config;
+    private final String statementName;
 
-    public CollectorMethod(ChangeFunction changeFunction, Method method, AceConfig config) {
-        this.changeFunction = changeFunction;
-        this.statementName = CommonUtils.getStatementName(method);
-        this.config = config;
+    public CollectorMethod(ChangeFunction changeFunction, String statementName, AceConfig config) {
+        this.changeFunction = notNull(changeFunction);
+        this.statementName = notNull(statementName);
+        this.config = notNull(config);
     }
 
     @Override
